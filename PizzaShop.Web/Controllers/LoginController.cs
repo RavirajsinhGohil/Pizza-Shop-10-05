@@ -132,7 +132,8 @@ public class LoginController : Controller
             User user = _userService.GetUserByEmail(model.Email);
             if (emailExist)
             {
-                string filePath = @"C:\Users\pct216\Downloads\Pizza Shop\Main Project\Pizza Shop\PizzaShop.Web\EmailTemplate\ResetPasswordEmailTemplate.html";
+                // string filePath = @"C:\Users\pct216\Downloads\Pizza Shop\Main Project\Pizza Shop\PizzaShop.Web\EmailTemplate\ResetPasswordEmailTemplate.html";
+                string filePath = @"C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Web\EmailTemplate\ResetPasswordEmailTemplate.html";
                 string emailBody = System.IO.File.ReadAllText(filePath);
 
                 string? token = _authService.GenerateJwtTokenForgot(user, false);

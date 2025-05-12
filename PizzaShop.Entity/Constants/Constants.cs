@@ -13,8 +13,8 @@ public class Constants
     public const string InvalidCredentials = "Invalid Credentials";
     public const string LoginSuccessfull = "Login Successful!";
     public const string PasswordResetLinkForwarded = "Password reset link have been sent to your email.";
-    public const string InvalidEmail = "Email is invalid";
-    public const string InvalidToken = "Token is invalid";
+    public const string InvalidEmail = "Invalid Email";
+    public const string InvalidToken = "Invalid Token";
     public const string PasswordNotMaches = "Passwords do not match";
     public const string NotResetPassword = "Failed to reset password";
     public const string ResetPassword = "Reset Password Successfully!";

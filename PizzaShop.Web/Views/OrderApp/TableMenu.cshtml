@@ -53,31 +53,31 @@
                         <div>@section123.SectionName</div>
                     </button>
 
-                        <div class="d-flex align-items-center m-1">
-                            <ul class="list-inline d-flex justify-content-center mb-0">
-                                <li class="list-inline-item d-flex justify-content-center align-items-center me-3">
-                                    <span class="d-inline-block rounded-circle me-1 "
-                                        style="width: 10px; height: 10px; background-color: #D2CEC6;"></span>
-                                    @section123.Available
-                                </li>
-                                <li class="list-inline-item d-flex justify-content-center align-items-center me-3">
-                                    <span class="d-inline-block rounded-circle me-1 "
-                                        style="width: 10px; height: 10px; background-color: #7FC83C;"></span>
-                                    @section123.Assigned
-                                </li>
-                                <li class="list-inline-item d-flex justify-content-center align-items-center me-3   ">
-                                    <span class="d-inline-block rounded-circle me-1 "
-                                        style="width: 10px; height: 10px; background-color: #77B4E0;"></span>
-                                    @section123.Running
-                                </li>
-                            </ul>
+                    <div class="d-flex align-items-center m-1">
+                        <ul class="list-inline d-flex justify-content-center mb-0">
+                            <li class="list-inline-item d-flex justify-content-center align-items-center me-3">
+                                <span class="d-inline-block rounded-circle me-1 "
+                                    style="width: 10px; height: 10px; background-color: #D2CEC6;"></span>
+                                @section123.Available
+                            </li>
+                            <li class="list-inline-item d-flex justify-content-center align-items-center me-3">
+                                <span class="d-inline-block rounded-circle me-1 "
+                                    style="width: 10px; height: 10px; background-color: #7FC83C;"></span>
+                                @section123.Assigned
+                            </li>
+                            <li class="list-inline-item d-flex justify-content-center align-items-center me-3   ">
+                                <span class="d-inline-block rounded-circle me-1 "
+                                    style="width: 10px; height: 10px; background-color: #77B4E0;"></span>
+                                @section123.Running
+                            </li>
+                        </ul>
 
-                            <a class="btn  btn-outline-primary" style="height: fit-content; text-wrap: nowrap;"
-                                data-bs-toggle="modal" data-bs-target="#waitingTokenModal" type="button"
-                                data-section="@section123.SectionName" data-section-id="@section123.SectionId">
-                                + Waiting Token
-                            </a>
-                        </div>
+                        <a class="btn  btn-outline-primary" style="height: fit-content; text-wrap: nowrap;"
+                            data-bs-toggle="modal" data-bs-target="#waitingTokenModal" type="button"
+                            data-section="@section123.SectionName" data-section-id="@section123.SectionId">
+                            + Waiting Token
+                        </a>
+                    </div>
                 </div>
 
                 <div id="Floor_@section123.SectionId" class="accordion-collapse collapse ">
@@ -158,20 +158,20 @@
                     <div class="form-floating mb-3">
                         <input type="email" name="Email" class="form-control" id="floatingEmail" placeholder="Email" />
                         <label for="floatingEmail">Email*</label>
-                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                        <div class="invalid-feedback">Email is required</div>
                     </div>
 
                     <div class="form-floating mb-3">
                         <input type="text" name="Name" class="form-control" id="floatingName" placeholder="Name" />
                         <label for="floatingName">Name*</label>
-                        <div class="invalid-feedback">Please enter the customer's name.</div>
+                        <div class="invalid-feedback">Name is required</div>
                     </div>
 
                     <div class="form-floating mb-3">
                         <input type="text" name="Phone" class="form-control" id="floatingPhone"
                             placeholder="Mobile Number" pattern="^[0-9]{10}$" />
                         <label for="floatingPhone">Mobile Number*</label>
-                        <div class="invalid-feedback">Enter a valid 10-digit mobile number.</div>
+                        <div class="invalid-feedback">Mobile Number is required</div>
                     </div>
 
                     <div class="row g-2">
@@ -180,7 +180,7 @@
                                 <input type="number" name="TotalPersons" class="form-control" id="floatingPersons"
                                     placeholder="No. of Persons" min="1" />
                                 <label for="floatingPersons">No. of Person(s)*</label>
-                                <div class="invalid-feedback">Please enter at least 1 person.</div>
+                                <div class="invalid-feedback">No. of Person(s) is required</div>
                             </div>
                         </div>
                         <div class="col form-floating mb-3">
@@ -192,7 +192,7 @@
                                 }
                             </select>
                             <label for="floatingSection">Section*</label>
-                            <div class="invalid-feedback">Please select a section.</div>
+                            <div class="invalid-feedback">Please select Section.</div>
                         </div>
                     </div>
                 </div>
@@ -259,10 +259,10 @@
                     </div>
                 </div>
 
-                <!-- Section -->
+                <!-- Section -->    
                 <div class="col-6">
                     <div class="form-floating">
-                        <select name="SectionName" class="form-select" style="height: 60px !important;"
+                        <select name="SectionName" class="form-select pe-none" style="height: 60px !important;"
                             id="SectionDropdown">
                             <option selected disabled value="">Select Section</option>
                             @foreach (var sections in assignModel.AvailableSections)
@@ -290,6 +290,43 @@
 <script>
     $(document).ready(function () {
 
+
+          $('.assignBtnForSection').on('click', function () {
+            debugger
+            var sectionId = $(this).data('section-id');  // Get the section ID from the button
+            var availableSections = @Html.Raw(Json.Serialize(assignModel.AvailableSections));  // Get the available sections
+            
+            // Clear the dropdown options first
+            $('#SectionDropdown').empty().append('<option selected disabled>Choose a Section</option>');
+            
+            // Populate the dropdown with available sections
+            availableSections.forEach(function (section) {
+                $('#SectionDropdown').append('<option value="' + section + '">' + section + '</option>');
+            });
+            
+            // Optionally, set the current section as selected in the dropdown
+            if (sectionId) {
+                $('#sectionDropdown').val(sectionId);
+            }
+        });
+        
+     // Trigger logic only when modal is fully shown
+    $('#waitingTokenModal').on('shown.bs.modal', function (event) {
+        debugger
+        const button = event.relatedTarget; // Button that triggered the modal
+        const sectionId = button.getAttribute('data-section-id'); // Get section id from data attribute
+
+        // Reset the form
+        const form = document.getElementById("waitingTokenForm");
+        if (form) {
+            form.reset();
+            form.classList.remove('was-validated');
+        }
+
+        // Set the dropdown value in modal
+        $('#floatingSection').val(sectionId).change();
+    });
+
         //for click assign button only when available table is selected
         $(".table-card.available-clickable").click(function () {
             const $selectedCard = $(this);
@@ -307,8 +344,8 @@
                 $("#SelectedTableId").val("");
                 $("#SectionName").val("");
 
-                    // Disable the assign button again
-                    assignButton.prop("disabled", true);
+                // Disable the assign button again
+                assignButton.prop("disabled", true);
                 assignButton.removeAttr("data-table-id").removeAttr("data-section");
 
             } else {
@@ -322,8 +359,8 @@
                 $("#SelectedTableId").val(tableId);
                 $("#SectionName").val(sectionName);
 
-                    // Enable the right assign button
-                    $(".assignBtnForSection").prop("disabled", true); // disable all
+                // Enable the right assign button
+                $(".assignBtnForSection").prop("disabled", true); // disable all
                 assignButton.prop("disabled", false)
                     .attr("data-table-id", tableId)
                     .attr("data-section", sectionName);
@@ -353,7 +390,7 @@
             const selectedCards = document.querySelectorAll('.table-card.selected-table');
             const selectedTableIds = Array.from(selectedCards).map(card => card.getAttribute('data-table-id'));
 
-            const tableIdsString = selectedTableIds.join(','); 
+            const tableIdsString = selectedTableIds.join(',');
 
             const assignOffcanvas = document.querySelector("#assignOffcanvas");
             if (!assignOffcanvas) {
@@ -481,4 +518,15 @@
             });
         }
     });
+
+    $("#assignOffcanvas").on("shown.bs.offcanvas", function () {
+        const selectedTableId = $("#SelectedTableId").val();
+        const sectionName = $("#SectionName").val();
+
+        // Set the values in the offcanvas
+        $("#SelectedTableId").val(selectedTableId);
+        $("#SectionName").val(sectionName);
+        $("#SectionDropdown").val(sectionName);
+    });
 </script>
+

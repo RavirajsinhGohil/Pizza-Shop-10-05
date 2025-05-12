@@ -29,21 +29,21 @@
     }
 </style>
 
-<div class="container-fluid" style="overflow: hidden !important; background-color: #f2f2f2;">
+<div class="d-flex add_user_heading flex-wrap align-items-center justify-content-between">
+    <div class="fw-bold fs-2 custom-blue-color">Dashboard</div>
+    <select class="form-select w-25" id="filterSelect" style="width: 200px !important;" onchange="applyFilter(this.value)">
+        <option value="" disabled selected>Select Filter</option>
+        <option value="Today">Today</option>
+        <option value="Last 7 Days">Last 7 Days</option>
+        <option value="Last 30 Days">Last 30 Days</option>
+        <option value="Current Month">Current Month</option>
+        <option value="Custom Date">Custom Date</option>
+    </select>
+</div>
+<div class="container-fluid p-0" style="overflow: hidden !important; background-color: #f2f2f2;">
 
-    <div class="d-flex flex-wrap add_user_heading align-items-center justify-content-between">
-        <div class="fw-bold fs-2 custom-blue-color">Dashboard</div>
-        <select class="form-select w-25" id="filterSelect" style="width: 200px !important;" onchange="applyFilter(this.value)">
-            <option value="" disabled selected>Select Filter</option>
-            <option value="Today">Today</option>
-            <option value="Last 7 Days">Last 7 Days</option>
-            <option value="Last 30 Days">Last 30 Days</option>
-            <option value="Current Month">Current Month</option>
-            <option value="Custom Date">Custom Date</option>
-        </select>
-    </div>
 
-    <div class="add_user_form">
+    <div class="add_user_form" style="background-color: #f2f2f2;">
         <div class="row gx-4">
             <div class="col-12 col-md-6 col-lg-3 cards  mt-3">
                 <div class="bg-white shadow rounded p-2">

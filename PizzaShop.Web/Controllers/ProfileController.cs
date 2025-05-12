@@ -76,6 +76,7 @@ public class ProfileController : Controller
         {
             string? token = Request.Cookies["Token"];
             string? userEmail = _userService.GetEmailFromToken(token);
+            model.Email = userEmail;
 
             if (string.IsNullOrEmpty(userEmail))
             {
@@ -92,7 +93,8 @@ public class ProfileController : Controller
 
             if (result == "IncorrectPassword")
             {
-                TempData["error"] = "Current password is incorrect.";
+                TempData["error"] = "Current Password incorrect.";
+                // TempData["error"] = "Current Password is incorrect.";
                 return View(model);
             }
 

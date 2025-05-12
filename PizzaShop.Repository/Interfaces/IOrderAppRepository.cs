@@ -37,6 +37,7 @@ public interface IOrderAppRepository
 
     List<Menucategory> GetAllCategories();
     List<Item> GetFilteredItems(int categoryId, string? searchText);
+    string GetModifierNameById(int? modifierId);
     void ToggleFavorite(int itemId);
     Task<ModifierSelectionModalViewModel> GetModifiersGroupedByItemAsync(int itemId);
     Task<OrderCustomerViewModel?> GetOrderCustomerAsync(int orderId);

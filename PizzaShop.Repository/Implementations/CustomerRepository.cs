@@ -64,7 +64,6 @@ public class CustomerRepository : ICustomerRepository
             DateTime startDate = now;
             switch (model.TimeLog)
             {
-
                 case "Last 7 days":
                     startDate = now.AddDays(-7);
                     break;
@@ -118,17 +117,15 @@ public class CustomerRepository : ICustomerRepository
             SortBy = model.SortBy,
             SortOrder = model.SortOrder,
             TimeLog = model.TimeLog,
-            CustomDate = model.CustomDate
+            CustomDate = model.CustomDate,
+            FromRec = (model.Page - 1) * model.PageSize + 1,
+            ToRec = Math.Min(model.Page * model.PageSize, totalItems)
         };
 
         return new CustomersListViewModel
         {
             Customers = paginatedItems,
             Pagination = pagination
-            // CurrentPage = model.Page,
-            // totalItems = totalItems,
-            // TotalPages = totalPages,
-            // PageSize = model.PageSize
         };
     }
 

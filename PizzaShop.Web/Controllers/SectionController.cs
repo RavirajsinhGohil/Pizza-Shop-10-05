@@ -68,7 +68,7 @@ public class SectionController : Controller
       return PartialView("~/Views/Section/_SectionList.cshtml", model);
     }
 
-    [HttpPost("AddSection")]
+    [HttpPost]
     public IActionResult AddSection(SectionAndTableViewModel model)
     {
       var response = _sectionService.AddSection(model.Section).Result;
@@ -83,7 +83,7 @@ public class SectionController : Controller
       return RedirectToAction("Index", "Section");
     }
 
-    [HttpPost("EditSection")]
+    [HttpPost]
     public IActionResult EditSection(SectionAndTableViewModel model)
     {
       var response = _sectionService.EditSection(model.Section).Result;
@@ -98,7 +98,7 @@ public class SectionController : Controller
       return RedirectToAction("Index", "Section");
     }
 
-    [HttpGet("DeleteSection")]
+    [HttpGet]
     public IActionResult DeleteSection(int id)
     {
       var AuthResponse = _sectionService.DeleteSection(id).Result;
@@ -112,7 +112,7 @@ public class SectionController : Controller
       return RedirectToAction("Index", "Section");
     }
 
-    [HttpPost("AddTable")]
+    [HttpPost]
     public IActionResult AddTable(SectionAndTableViewModel model)
     {
       var response = _sectionService.AddTable(model.Table).Result;
@@ -127,7 +127,7 @@ public class SectionController : Controller
       return RedirectToAction("Index", "Section");
     }
     
-    [HttpPost("EditTable")]
+    [HttpPost]
     public IActionResult EditTable(SectionAndTableViewModel model)
     {
       var response = _sectionService.EditTable(model.Table).Result;
@@ -143,7 +143,7 @@ public class SectionController : Controller
     }
 
     // Delete Table
-    [HttpGet("DeleteTable")]
+    [HttpGet]
     public IActionResult DeleteTable(int id)
     {
       var AuthResponse = _sectionService.DeleteTable(id).Result;

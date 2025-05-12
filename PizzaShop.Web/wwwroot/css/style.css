@@ -416,8 +416,8 @@ Permission
 
  .permissions {
     padding: 15px;
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-left: 2%;
+    margin-right: 2%;
     margin-top: 1.5rem;
     background-color: white;
     border-radius: 5px;
@@ -537,7 +537,6 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none !important;
 }
-
 
 /* ***************
 Item
@@ -709,4 +708,15 @@ Table menu
 
 .selected-table {
     border: 2px solid #99D363 !important;
+}
+
+.custom-modal-size {
+    /* width: 500px !important;   
+    height: 400px !important;      */
+    /* max-width: 90vw;    
+    max-height: 90vh;    */
+}
+
+.custom-modal-size .modal-content {
+    height: 100%;
 }

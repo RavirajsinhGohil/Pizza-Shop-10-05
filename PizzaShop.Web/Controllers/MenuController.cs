@@ -255,6 +255,13 @@ public class MenuController : Controller
         return PartialView("_AddExistingModifierForAdd", model);
     }
 
+    public async Task<IActionResult> GetModifiersForExistingModifiersForEdit(int pageNumber = 1, int pageSize = 5)
+    {
+        MenuItemViewModel model = _menuService.GetMenuItemModelForAddExistingModifier(pageNumber, pageSize).Result;
+
+        return PartialView("_AddExistingModifiers", model);
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddModifierGroup([FromBody] ModifierGroupViewModel model)
     {
@@ -318,13 +325,11 @@ public class MenuController : Controller
             bool isAdded = await _menuService.AddModifierinGroups(model);
             if (isAdded)
             {
-                TempData["success"] = "Modifier item added successfully!";
-                return RedirectToAction("Menu");
+                return Json(new { success = true, message = "Modifier added successfully!" });
             }
             else
             {
-                TempData["success"] = "Modifier item is not added!";
-                return RedirectToAction("Menu");
+                return Json(new { success = false, message = "Error in adding modifier." });
             }
         }
         catch (Exception ex)
@@ -371,7 +376,7 @@ public class MenuController : Controller
             bool isAdded = await _menuService.addExistingModifiersForEdit(modifierGroupId, name, description, selectedModifiers);
             if (isAdded)
             {
-                return Json(new { success = true, Mesmessage = "Modifier Group updated successfully." });
+                return Json(new { success = true, message = "Modifier Group updated successfully." });
             }
             else
             {

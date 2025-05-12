@@ -56,18 +56,12 @@ $(document).ready(function () {
                 currentPage = page;
                 pageSize = pageSizeValue;
 
-                updatePaginationButtons();
+                // updatePaginationButtons();
             },
             error: function (xhr, status, error) {
                 console.error("AJAX Error:", status, error);
             }
         });
-    }
-
-    function updatePaginationButtons() {
-        $('#prevPage').prop('disabled', currentPage <= 1);
-        $('#nextPage').prop('disabled', currentPage >= totalPages);
-        $('#currentPageDisplay').text(`Showing ${fromRecord}- ${pageSize} of ${totalItems}`);
     }
 
     //  Handle Previous Page Click
@@ -84,14 +78,13 @@ $(document).ready(function () {
     });
 
     $(document).on('change', '#pageSizes', function () {
-        pageSize = parseInt($(this).val()) || 2;
+        pageSize = parseInt($(this).val()) || 5;
         fetchItems(searchTerm, 1, pageSize, sortBy, sortOrder, statusLog, timeLog, fromDate, toDate);
     });
 
     $(document).on('keyup', '#searchBox', function () {
         clearTimeout(searchTimeout);
         searchTerm = $(this).val();
-
     });
 
     //For sorting according to sortBy and sortOrder
@@ -131,6 +124,16 @@ $(document).ready(function () {
         $("#fromDate").val('');
         $("#toDate").val('');
 
+        searchTerm = '';
+        statusLog = 'All Status';
+        timeLog = 'All Time';
+        fromDate = '';
+        toDate = '';
+        sortBy = 'OrderId';
+        sortOrder = 'asc';
+        pageSize = parseInt($("#pageSizes").val()) || 5;
+        currentPage = 1;
+
         fetchItems('', 1, pageSize, sortBy, sortOrder, "All Status", "All Time", '', '');
     });
 
@@ -147,30 +150,20 @@ $(document).ready(function () {
 
 $("#fromDate").on('change', function () {
     var fromDate = $(this).val();
-    var toDate = $("#toDate").val() ?? fromDate;
-
-    if(fromDate > toDate)
-    {
-        $("#fromDateValidation").text("From Date must be greater than or equal to To Date");
-    }
-    else
-    {
-        $("#fromDateValidation").empty();
-        $("#toDateValidation").empty();
+    if (fromDate) {
+        // Set minimum selectable date for To Date
+        $("#toDate").attr("min", fromDate);
+    } else {
+        $("#toDate").removeAttr("min");
     }
 });
 
 $("#toDate").on('change', function () {
-    var fromDate = $("#fromDate").val();
     var toDate = $(this).val();
-
-    if(fromDate > toDate)
-    {
-        $("#toDateValidation").text("To Date must be less than or equal to From Date");
-    }
-    else
-    {
-        $("#fromDateValidation").empty();
-        $("#toDateValidation").empty();
+    if (toDate) {
+        // Set maximum selectable date for From Date
+        $("#fromDate").attr("max", toDate);
+    } else {
+        $("#fromDate").removeAttr("max");
     }
 });

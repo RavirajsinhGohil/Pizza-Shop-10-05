@@ -1,6 +1,6 @@
 @model PizzaShop.Entity.ViewModel.UserPaginationViewModel;
 
-<div class="table-responsive" style="overflow: auto;">
+<div class="table-responsive" style="display: block; max-height: 400px !important; overflow-y: auto;" >
 
     <table class="table fs-6">
         <thead>
@@ -8,7 +8,7 @@
                 <th class="user_list_font_color"></th>
                 <th class="user_list_font_color">
                     <a href="#" style="text-decoration: none;" class="user_list_font_color"
-                        onclick="loadUsers(1, 'Name', '@(Model.SortBy == "Name" && Model.SortOrder == "asc" ? "desc" : "asc")', '@Model.PageSize')">
+                        onclick="loadUsers('', 1, '@Model.PageSize', 'Name', '@(Model.SortBy == "Name" && Model.SortOrder == "asc" ? "desc" : "asc")'  )">
                         Name
                         <span class="sort-icons">
                             <span
@@ -22,7 +22,7 @@
                 <th class="user_list_font_color">Phone</th>
                 <th class="user_list_font_color">
                     <a href="#" style="text-decoration: none;" class="user_list_font_color"
-                        onclick="loadUsers(1, 'Role', '@(Model.SortBy == "Role" && Model.SortOrder == "asc" ? "desc" : "asc")', '@Model.PageSize')">
+                        onclick="loadUsers('', 1, '@Model.PageSize', 'Role', '@(Model.SortBy == "Role" && Model.SortOrder == "asc" ? "desc" : "asc")')">
                         Role
                         <span class="sort-icons">
                             <span
@@ -36,7 +36,7 @@
                 <th class="user_list_font_color">Action</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody >
             @foreach (var user in Model.Users)
             {
                 <tr class="userlist-row">
@@ -64,12 +64,12 @@
                     </td>
                     <td>
                         <div class="d-flex">
-                            <a class="d-flex align-items-center" asp-controller="User" asp-action="EditUser"
+                            <a class="d-flex align-items-center" title="Edit" asp-controller="User" asp-action="EditUser"
                                 asp-route-Userid="@user.Userid">
                                 <img src="~/images/Download/pencil.svg" alt="">
                             </a>
                             <div>
-                                <a class="btn btn-primary bg-white delete_btn" data-bs-toggle="modal"
+                                <a class="btn btn-primary bg-white delete_btn" title="Delete" data-bs-toggle="modal"
                                     data-bs-target="#userdelete_@user.Userid">
                                     <img src="~/images/Download/trash.svg" alt="">
                                 </a>
@@ -109,11 +109,11 @@
         </tbody>
     </table>
 </div>
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-end">
+<nav aria-label="Page navigation example " class="mt-2">
+    <ul class="pagination justify-content-end mb-0">
         <li class="d-flex align-items-center pe-3">Items per page</li>
         <li class="d-flex align-items-center pe-3" style="border-radius: 5px; height: 40px;">
-            <select id="itemsPerPage" onchange="loadUsers(1, '@Model.SortBy', '@Model.SortOrder', this.value)">
+            <select id="itemsPerPage" onchange="loadUsers('', 1, this.value, '@Model.SortBy', '@Model.SortOrder', )">
                 <option value="5" selected="@(Model.PageSize == 5)">5</option>
                 <option value="10" selected="@(Model.PageSize == 10)">10</option>
                 <option value="15" selected="@(Model.PageSize == 15)">15</option>
@@ -124,18 +124,17 @@
 
         <!-- Previous Page Button -->
         <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-            <a class="page-link" href="#"
-                onclick="loadUsers(@(Model.CurrentPage - 1), '@Model.SortOrder', '@Model.PageSize')">
-                <span class="sr-only"><img src="~/images/icons/chevron-left.svg" alt="Prev"></span>
+            <a class="page-link text-dark" href="#"
+                onclick="loadUsers('', @(Model.CurrentPage - 1),'@Model.PageSize', '@Model.SortBy', '@Model.SortOrder')">
+                <span class="sr-only">&lt;</span>
             </a>
         </li>
 
         <!-- Next Page Button -->
         <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-            <a class="page-link" href="#"
-                onclick="loadUsers(@(Model.CurrentPage + 1), '@Model.SortOrder', '@Model.PageSize')">
-                @* onclick="loadUsers(@(Model.CurrentPage + 1),@Model.SortBy,  '@Model.SortOrder', '@Model.PageSize', '')"> *@
-                <span class="sr-only"><img src="~/images/icons/chevron-right.svg" alt="Next"></span>
+            <a class="page-link text-dark" href="#"
+                onclick="loadUsers('', @(Model.CurrentPage + 1), '@Model.PageSize', '@Model.SortBy', '@Model.SortOrder')">
+                <span class="sr-only">&gt;</span>
             </a>
         </li>
     </ul>

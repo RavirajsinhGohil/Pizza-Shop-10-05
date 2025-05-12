@@ -36,14 +36,14 @@
                         <td>@waitingToken.CustomerEmail</td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                <button class="d-flex btn align-items-center edit-token" data-token-id="@waitingToken.TokenId">
+                                <button class="d-flex btn align-items-center edit-token" data-token-id="@waitingToken.TokenId" title="Edit">
                                     <img src="~/images/Download/pencil.svg" alt="">
                                 </button>
-                                <a class="btn  deleteTokenBtn" data-bs-toggle="modal"
+                                <a class="btn  deleteTokenBtn" data-bs-toggle="modal" title="Delete"
                                     data-bs-target="#waitingTokenDeleteModal">
                                     <img src="~/images/Download/trash.svg" alt="">
                                 </a>
-                                <button data-total-persons="@waitingToken.NoOfPeople" data-id="@waitingToken.TokenId" data-customer='@Html.Raw(customerJson)' class="btn assign-table-btn">a</button>
+                                <button data-total-persons="@waitingToken.NoOfPeople" title="Assign" data-id="@waitingToken.TokenId" data-customer='@Html.Raw(customerJson)' class="btn assign-table-btn">a</button>
                             </div>
                         </td>
                     </tr>

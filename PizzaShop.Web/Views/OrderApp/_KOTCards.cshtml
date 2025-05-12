@@ -25,7 +25,10 @@
     </div>
 </div>
 
-<div class="row" id="cardWrapper">
+<div id="cardWrapper" class="overflow-hidden position-relative" style="width: 100%;">
+    <div id="cardSlider" class="d-flex flex-nowrap" style="transition: transform 0.5s ease; gap: 1rem;">
+        <!-- Your foreach card rendering stays here -->
+
     @foreach (var order in Model)
     {
         if (order.Items.All(item => item.InProgressQuantity == 0))
@@ -37,7 +40,7 @@
         TimeSpan timeSinceOrder = DateTime.Now - order.CreatedAt;
         string? timeRemainingFormatted = $"{(int)timeSinceOrder.TotalDays} days {(int)timeSinceOrder.Hours} hours {(int)timeSinceOrder.Minutes} min {(int)timeSinceOrder.Seconds} sec";
         
-        <button type="button" data-order='@Html.Raw(Json.Serialize(order))' style="width: 390px !important;" class="btn openOrderModal d-flex pe-2 me-3" data-bs-toggle="modal" data-bs-target="#inProgressModal" data-order-id="@order.OrderId">
+        <button type="button" class="btn openOrderModal d-flex pe-2 me-3" data-order='@Html.Raw(Json.Serialize(order))' style="width: 390px; flex: 0 0 auto;" data-bs-toggle="modal" data-bs-target="#inProgressModal" data-order-id="@order.OrderId">
             <div class="kotCard overflow-auto w-100" style="height: 40vh !important;">
                 <div class="card h-100 d-flex flex-column  order-card" data-order-id="@order.OrderId" style="cursor: pointer; border: 1.5px solid #979797 ; border-style: dashed;">
                     <div class="card-header">
@@ -96,7 +99,12 @@
             </div>
         </button>
     }
-    <div class="modal fade" id="inProgressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    
+</div>
+</div>
+
+@* modal *@
+<div class="modal fade" id="inProgressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -124,15 +132,56 @@
             </div>
         </div>
     </div>
-</div>
-</div>
 
 <script>
+    let currentPage = 0;
+    const cardWidth = 400;
+
+    function getSliderInfo() {
+        const cardSlider = document.getElementById("cardSlider");
+        const cardWrapper = document.getElementById("cardWrapper");
+
+        const visibleWidth = cardWrapper.offsetWidth;
+        const cardsPerPage = Math.floor(visibleWidth / cardWidth) -1;
+        const totalCards = cardSlider.children.length;
+        const totalPages = Math.ceil(totalCards / cardsPerPage);
+
+        return { cardSlider, cardsPerPage, totalPages };
+    }
+
+    function nextSlide() {
+        const { cardSlider, cardsPerPage, totalPages } = getSliderInfo();
+
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+        } else {
+            currentPage = 0;
+        }
+        updateSlide(cardSlider, cardsPerPage);
+    }
+
+    function prevSlide() {
+        const { cardSlider, cardsPerPage, totalPages } = getSliderInfo();
+
+        if (currentPage > 0) {
+            currentPage--;
+        } else {
+            currentPage = totalPages - 1;
+        }
+        updateSlide(cardSlider, cardsPerPage);
+    }
+
+    function updateSlide(cardSlider, cardsPerPage) {
+        const offset = -(currentPage * cardsPerPage * cardWidth);
+        cardSlider.style.transform = `translateX(${offset}px)`;
+    }
+
     $(document).ready(function () {
+        console.log("KOT Cards JS loaded");
         const categoryId = $('#kotTabs button.active').data('id');
         setupKOTCardButtons(categoryId);
     });
-
 </script>
+
 
 @* <script src="~/js/KOTview.js"></script> *@ 

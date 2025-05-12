@@ -1,3 +1,6 @@
+
+
+
 function loadKOTCards(categoryId, inProgress) {
     const url = `/OrderApp/LoadKOTCards?categoryId=${encodeURIComponent(categoryId)}&inProgress=${encodeURIComponent(inProgress)}`;
 
@@ -80,8 +83,8 @@ function decrement(btn) {
 
 var orderId;
 $(document).on('click', '.openOrderModal', function () {
-    const orderData = $(this).data('order'); 
-    orderId = orderData.orderId; 
+    const orderData = $(this).data('order');
+    orderId = orderData.orderId;
     if (!orderData) return;
 
     $('#inProgressModal .modal-title').text("Order Id: #" + orderData.orderId);
@@ -123,7 +126,7 @@ $(document).on('click', '#markReadyBtn', function () {
     }).get();
 
     if (selectedItems.length === 0) {
-        alert("Please select at least one item to mark as ready.");
+        toastr.error("Please select at least one item to mark as ready.");
         return;
     }
 
@@ -158,7 +161,7 @@ $(document).on('click', '#markInProgressBtn', function () {
     }).get();
 
     if (selectedItems.length === 0) {
-        alert("Please select at least one item to mark as in progress.");
+        toastr.error("Please select at least one item to mark as in progress.");
         return;
     }
 
@@ -185,37 +188,6 @@ $(document).on('click', '#markInProgressBtn', function () {
     });
 });
 
-let currentSlide = 0;
-const cardsToShow = 1;
-const cardWidth = 390;
-
-function nextSlide() {
-    const cardWrapper = document.getElementById("cardWrapper");
-    currentSlide += cardsToShow;
- 
-   // Check if the slide goes out of bounds
-    const maxSlide = cardWrapper.children.length - cardsToShow;
-    if (currentSlide > maxSlide) {
-        currentSlide = 0;
-    }
- 
-    const offset = -currentSlide * cardWidth;
-    cardWrapper.style.transform = `translateX(${offset}px)`;
-}
-function prevSlide() {
-    const cardWrapper = document.getElementById("cardWrapper");
-    currentSlide -= cardsToShow;
- 
-   // Check if the slide goes out of bounds
-    const maxSlide = cardWrapper.children.length + cardsToShow;
-    if (currentSlide < 1) {
-        currentSlide = 0;
-    }
- 
-    const offset = -currentSlide * cardWidth;
-    cardWrapper.style.transform = `translateX(${offset}px)`;
-}
-
 function initLiveTimers() {
     $('.updatedLiveTimeKOT').each(function () {
         var $this = $(this);
@@ -239,3 +211,5 @@ function initLiveTimers() {
         setInterval(updateTimer, 1000);
     });
 }
+
+

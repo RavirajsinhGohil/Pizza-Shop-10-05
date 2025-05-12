@@ -13,10 +13,10 @@
 
         <div class="d-flex justify-content-between d-none" id="categoryoption_actionbtn">
 
-            <img class="btn p-1" src="~/images/Download/pencil.svg" alt="" data-bs-toggle="modal" data-bs-target="#Editsectionmodal"
+            <img class="btn p-1" src="~/images/Download/pencil.svg" alt="" data-bs-toggle="modal" title="Edit" data-bs-target="#Editsectionmodal"
                 onclick="setEditSectionData(this)" item-obj='@Html.Raw(Json.Serialize(c))'>
 
-            <img class="btn p-1" src="~/images/Download/trash.svg" data-bs-toggle="modal" data-bs-target="#deletesectionmodal"
+            <img class="btn p-1" src="~/images/Download/trash.svg" data-bs-toggle="modal" title="Delete" data-bs-target="#deletesectionmodal"
                 onclick="setDeleteSectionId(this)" section-id="@c.SectionId" alt="">
         </div>
     </div>

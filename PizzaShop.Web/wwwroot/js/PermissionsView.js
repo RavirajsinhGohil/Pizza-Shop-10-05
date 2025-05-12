@@ -1,29 +1,79 @@
 $(document).ready(function () {
+    //Check if all checkboxes are checked then selectAll checkbox will be checked
+    // (".custom-switch").any(function () {
+
+
     var urlPramas = new URLSearchParams(window.location.search);
     var role = urlPramas.get("role");
 
     var row = $(".custom-switch").closest("tr");
     var allSwitches = row.find(".custom-switch");
     var rowCheckbox = row.find(".row-checkbox");
+    console.log("Row Checkbox", rowCheckbox);
 
-    if (allSwitches.filter(":checked").length > 0) {
-        rowCheckbox.prop("checked", true);
-        allRowCheckboxes = $(".row-checkbox");
-        allChecked = allRowCheckboxes.length === allRowCheckboxes.filter(":checked").length;
-        $("#selectAll").prop("checked", allChecked);
+    // rowCheckbox.each(function () {
+    //     var eachRowCheckboxes = $(this).closest('custom-switch');
+    //     if (eachRowCheckboxes.is(":checked")) {
+    //         $(this).prop("checked", true);
+    //     } else {
+    //         $(this).prop("checked", false);
+    //     }
+    // });
 
-    } else {
-        rowCheckbox.prop("checked", false);
-        allRowCheckboxes = $(".row-checkbox");
-        allChecked = allRowCheckboxes.length === allRowCheckboxes.filter(":checked").length;
-        $("#selectAll").prop("checked", allChecked);
+    $(".permission_table tr").each(function () {
+        var $row = $(this);
+        var $allSwitches = $row.find(".custom-switch");
+        var $rowCheckbox = $row.find(".row-checkbox");
 
-    }
+        // Check if at least one custom-switch is checked in the row
+        if ($allSwitches.filter(":checked").length > 0) {
+            $rowCheckbox.prop("checked", true);
+        } else {
+            $rowCheckbox.prop("checked", false);
+        }
+    });
+
+    // Check if Can Add/Edit check box is checked then check the can view checkbox
+    $(".custom-switch").each(function () {
+        var $row = $(this).closest("tr");
+        var $canViewSwitch = $row.find(".custom-switch[data-type='CanView']");
+        var $canAddEditSwitch = $row.find(".custom-switch[data-type='CanAddEdit']");
+
+        if ($canAddEditSwitch.is(":checked")) {
+            $canViewSwitch.prop("checked", true);
+        }
+    });
+
+
+    // if (allSwitches.filter(":checked").length > 0) {
+    //     rowCheckbox.prop("checked", true);
+    //     allRowCheckboxes = $(".row-checkbox");
+    //     allChecked = allRowCheckboxes.length === allRowCheckboxes.filter(":checked").length;
+    //     $("#selectAll").prop("checked", allChecked);
+    // } else {
+    //     rowCheckbox.prop("checked", false);
+    //     allRowCheckboxes = $(".row-checkbox");
+    //     allChecked = allRowCheckboxes.length === allRowCheckboxes.filter(":checked").length;
+    //     $("#selectAll").prop("checked", allChecked);
+
+    // }
 
     $(document).on('change', "#selectAll", function () {
         var isChecked = $(this).is(":checked");
-        if(".")
-        $(".row-checkbox, .custom-switch").prop("checked", isChecked);
+        // Check for RoleAndPermission toggel 
+        $(".row-checkbox").each(function () {
+            var row = $(this).closest('tr');
+            if (row.find('td:nth-child(2)').text() !== "RoleAndPermission") {
+                $(this).prop("checked", isChecked);
+            }
+        });
+
+        $(".custom-switch").each(function () {
+            var row = $(this).closest('tr');
+            if (row.find('td:nth-child(2)').text() !== "RoleAndPermission") {
+                $(this).prop("checked", isChecked);
+            }
+        });
     });
 
     // Check if all row-checkboxes are checked

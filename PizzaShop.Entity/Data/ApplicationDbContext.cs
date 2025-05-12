@@ -934,7 +934,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .HasColumnName("username");
-            entity.Property(e => e.Zipcode).HasColumnName("zipcode");
+            entity.Property(e => e.Zipcode)
+                .HasMaxLength(20)
+                .HasColumnName("zipcode");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.Roleid)

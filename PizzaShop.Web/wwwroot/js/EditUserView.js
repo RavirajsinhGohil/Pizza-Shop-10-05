@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+    
     // get countries on page load
     $.getJSON('/GetData/GetCountries', function (data) {
         // set the selected country, state, and city from the model

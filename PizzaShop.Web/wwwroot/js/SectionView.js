@@ -115,7 +115,7 @@
     function setDeleteSectionId(element) {
         var Id = element.getAttribute("section-id");
         var deleteBtn = document.getElementById("deleteSectionBtn");
-        deleteBtn.href = `Section/DeleteSection?id=${Id}`;
+        deleteBtn.href = `/Section/DeleteSection?id=${Id}`;
     }
 
     // @* set edit data for table *@
@@ -133,7 +133,7 @@
     function setDeleteTableData(element) {
         var Id = element.getAttribute("table-id");
         var deleteBtn = document.getElementById("deleteTableBtn");
-        deleteBtn.href = '@Url.Action("DeleteTable", "Section")' + '?id=' + Id;
+        deleteBtn.href = `/Section/DeleteTable?id=${Id}`;
     }
 
     // @* Mass Delete Of Table *@
@@ -168,7 +168,7 @@
         var selectedItems = document.querySelectorAll(".tablelist_inner_checkbox:checked");
         if (selectedItems.length === 0) {   
             e.preventDefault();
-            toastr.warning("Please select table(s) to delete.", "Warning");
+            toastr.error("Please select table(s) to delete.");
         }
         else{
             var MyModal = new bootstrap.Modal(document.getElementById('deletemultipletablemodal'));

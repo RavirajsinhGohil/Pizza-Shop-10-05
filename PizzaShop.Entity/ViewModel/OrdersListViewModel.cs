@@ -9,6 +9,6 @@ public class OrdersListViewModel
     public int PageSize { get; set; }
     public string? SortBy { get; set; } 
     public string? SortOrder { get; set; }
-    public int FromRec => (CurrentPage - 1) * PageSize + 1;
+    public int FromRec { get; set; }
     public int ToRec { get; set; }
 }

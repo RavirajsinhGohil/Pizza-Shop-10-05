@@ -17,8 +17,9 @@
 
 <body>
     <div class="main">
-        <div class="offcanvas offcanvas-start d-lg-block show" tabindex="-1" id="sidebar" data-bs-scroll="true"
-            data-bs-backdrop="false" aria-controls="offcanvasScrolling">
+        <div class="offcanvas offcanvas-start d-lg-block show border-none" style="border-right: 0px !important;"
+            tabindex="-1" id="sidebar" data-bs-scroll="true" data-bs-backdrop="false"
+            aria-controls="offcanvasScrolling">
 
             <div class="offcanvas-body" style="overflow: hidden;">
                 <div class="d-flex align-items-center justify-content-center">
@@ -85,13 +86,14 @@
                 </div>
             </a>
             <div>
-                @if(roleId != "1")
+                @if (roleId != "1")
                 {
                     <a asp-controller="OrderApp" asp-action="TableMenu"><img class="img-fluid me-3 "
-                            style="filter:invert(1) ;height: 30px !important; " src="~/images/Download/phone.svg" alt=""></a>
+                            style="filter:invert(1) ;height: 30px !important; " src="~/images/Download/phone.svg"
+                            alt=""></a>
                 }
                 <img class=" dropdown-toggle me-5 rounded-circle" data-bs-toggle="dropdown" aria-expanded="false"
-                    width="30" height="30" src="@Context.Request.Cookies["Image"]" alt="">
+                    style="cursor: pointer;" width="30" height="30" src="@Context.Request.Cookies["Image"]" alt="">
                 <ul class="dropdown-menu dropdown-menu-end ">
                     <li>
                         <a class="dropdown-item d-flex align-items-center">
@@ -106,15 +108,15 @@
                     <li>
                         <a class="dropdown-item d-flex align-items-center" asp-controller="Profile"
                             asp-action="Profile">
-                            <img class="me-2 rounded-circle" width="30" height="30"
-                                src="~/images/Default_pfp.svg.png" alt="1">
+                            <img class="me-2 rounded-circle" width="30" height="30" src="~/images/Default_pfp.svg.png"
+                                alt="1">
                             My profile
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center" asp-controller="Profile"
                             asp-action="ProfileChangePassword">
-                            <img class="img-fluid me-2" width="20" height="20"
+                            <img class="img-fluid me-2" width="30" height="30"
                                 src="~/images/Download/arrow-clockwise.svg" alt="">
                             Change Password
                         </a>
@@ -123,7 +125,7 @@
                         <a class="dropdown-item d-flex align-items-center" asp-controller="Profile" asp-action="Logout"
                             data-bs-toggle="modal" data-bs-target="#logout">
                             <div class="d-flex">
-                                <img class="img-fluid me-2" width="20" height="20"
+                                <img class="img-fluid me-2" width="30" height="30"
                                     src="~/images/Download/box-arrow-left.svg" alt="">
                                 Logout
                             </div>
@@ -134,26 +136,25 @@
         </div>
 
         <div class="modal fade" id="logout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered justify-content-center">
-                <form>
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <div class="d-flex justify-content-center"><img class="alert_img w-50" width="100px"
-                                    height="100px" src="~/images/toppng.com-warning-icon-2400x2400.png" alt=""></div>
-                            <div class="d-flex justify-content-center">Are you sure you want to logout?
-                            </div>
-                        </div>
-                        <div class="modal-footer d-flex justify-content-center">
-                            <div class=" mt-3">
-                                <button type="submit" asp-controller="Login" asp-action="Logout"
-                                    class="btn custom-btn-bg text-white">Yes</button>
-                                <button type="btn" class="btn custom-blue-border bg-white custom-blue-color ms-1">No</button>
-                            </div>
+            <div class="modal-dialog modal-dialog-centered justify-content-center custom-modal-size">
+                <div class="modal-content ">
+                    <div class="modal-body text-center">
+                        <img class="alert_img " width="100px" height="100px"
+                            src="~/images/toppng.com-warning-icon-2400x2400.png" alt="">
+                        <div>Are you sure you want to logout?</div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <div class="mt-3">
+                            <a asp-controller="Login" asp-action="Logout"
+                                class="btn custom-btn-bg text-white">Yes</a>
+                            <button type="button" class="btn custom-blue-border bg-white custom-blue-color ms-1"
+                                data-bs-dismiss="modal">No</button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
+
         <partial name="_Toaster.cshtml"></partial>
         @RenderBody()
 
@@ -180,9 +181,9 @@
             $(this).find('form').trigger('reset');
         }); *@
 
-        function PageReload() {
-            location.reload();
-        }
+            function PageReload() {
+                location.reload();
+            }
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

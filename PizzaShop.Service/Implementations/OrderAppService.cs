@@ -252,8 +252,9 @@ public class OrderAppService : IOrderAppService
 
         /*  4. Open new order  */
         Order? order = await _orderAppRepository.GetOrderByCustomerId(customer.Customerid);
-        if (order == null)
-        {
+
+        // if (order == null)
+        // {
             order = new Order
             {
                 Customerid = customer.Customerid,
@@ -266,29 +267,28 @@ public class OrderAppService : IOrderAppService
             };
 
             await _orderAppRepository.AddOrder(order);
-        }
-        else
-        {
-            order.Noofpersons = model.NoOfPersons;
-            order.Status = "Pending";
-            order.Paymentmode = "Pending";
-            order.Updatedat = DateTime.Now;
-            order.Updatedby = 1;
+        // }
+        // else
+        // {
+        //     order.Noofpersons = model.NoOfPersons;
+        //     order.Status = "Pending";
+        //     order.Paymentmode = "Pending";
+        //     order.Updatedat = DateTime.Now;
+        //     order.Updatedby = 1;
 
-            await _orderAppRepository.UpdateOrder(order);
-        }
+        //     await _orderAppRepository.UpdateOrder(order);
+        // }
 
         // /*  5. Assign tables & mapping rows  */
         foreach (var table in tables)
         {
-            table.Status = true;
+            table.Status = false;
             table.Newstatus = 2; // TableStatus.Assigned;
 
             await _orderAppRepository.AddTableOrderMapping(order.Orderid, table.Tableid);
         }
 
         int orderId = order.Orderid;
-
         /*  6. Done  return new OrderId  */
         return orderId;
     }
@@ -493,10 +493,6 @@ public class OrderAppService : IOrderAppService
     public async Task<OrderItemForRowViewModel?> RenderOrderItemRow(RenderOrderItemRowRequest request)
     {
         Console.WriteLine($"ItemId: {request.ItemId}, ItemName: {request.ItemName}, BasePrice: {request.BasePrice}, Quantity: {request.Quantity}, Index: {request.Index}, Instruction: {request.Instruction}, SelectedModifiers: {request.SelectedModifiers}");
-        // Console.WriteLine($"SelectedModifiers0: {request.SelectedModifiers[0].ModifierId}, {request.SelectedModifiers[0].ModifierName}, {request.SelectedModifiers[0].Rate}");
-        // Console.WriteLine($"SelectedModifiers1: {request.SelectedModifiers[1].ModifierId}, {request.SelectedModifiers[1].ModifierName}, {request.SelectedModifiers[1].Rate}");
-        // Console.WriteLine($"SelectedModifiers2: {request.SelectedModifiers[2].ModifierId}, {request.SelectedModifiers[2].ModifierName}, {request.SelectedModifiers[2].Rate}");
-        // Console.WriteLine($"SelectedModifiers3: {request.SelectedModifiers[3].ModifierId}, {request.SelectedModifiers[3].ModifierName}, {request.SelectedModifiers[3].Rate}");
         int? readyQty = await _orderAppRepository.GetReadyQuantity(request.ItemId, request.Quantity);
 
         OrderItemForRowViewModel? viewModel = new()
@@ -559,7 +555,7 @@ public class OrderAppService : IOrderAppService
             Modifiers = od.Ordermodifierdetails.Select(m => new SaveModifierViewModel
             {
                 ModifierId = m.Itemid ?? 0,
-                ModifierName = m.Item?.Itemname ?? string.Empty,
+                ModifierName =  _orderAppRepository.GetModifierNameById(m.Itemid),
                 Rate = m.Price
             }).ToList()
         }).ToList();

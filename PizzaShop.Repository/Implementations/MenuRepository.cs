@@ -170,7 +170,7 @@ public class MenuRepository : IMenuRepository
                     Quantity = item.Quantity,
                     Isdeleted = item.Isdeleted
                 })
-            .Where(item => item.Quantity > 0 && !item.Isdeleted);
+            .Where(item => !item.Isdeleted);
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
@@ -290,10 +290,10 @@ public class MenuRepository : IMenuRepository
         return _dbo.Modifiergroups.FirstOrDefault(mg => mg.Modifiergroupid == id && !mg.Isdeleted);
     }
 
-    public bool UpdateModifierGroup(Modifiergroup model)
+    public async Task<bool> UpdateModifierGroup(Modifiergroup model)
     {
         _dbo.Modifiergroups.Update(model);
-        _dbo.SaveChangesAsync();
+        await _dbo.SaveChangesAsync();
         return true;
     }
 
@@ -353,7 +353,9 @@ public class MenuRepository : IMenuRepository
                                 Rate = item.Rate ?? 0,
                                 Quantity = item.Quantity,
                                 Isdeleted = item.Isdeleted
-                            }).ToListAsync();
+                            })
+                            .Where(item => !item.Isdeleted)
+                            .ToListAsync();
     }
 
     public async Task<List<ModifierGroupViewModel>> GetModifierGroupsForEditModifier()

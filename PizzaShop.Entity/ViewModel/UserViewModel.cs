@@ -26,21 +26,23 @@ public class UserViewModel
 
     public string? Rolename { get; set; }
 
-    [Required(ErrorMessage = "Please Select Country")]
+    [Required(ErrorMessage = "Please select Country")]
     public string? Country { get; set; }
 
-    [Required(ErrorMessage = "Please Select State")]
+    [Required(ErrorMessage = "Please select State")]
     public string? State { get; set; }
 
 
-    [Required(ErrorMessage = "Please Select City")]
+    [Required(ErrorMessage = "Please select City")]
     public string? City { get; set; }
 
-    [Required(ErrorMessage = "Zipcode is Required")]
-    public int? Zipcode { get; set; }
+    [Required(ErrorMessage = "Zipcode is Required.")]
+    [RegularExpression(@"^(?!000000)\d{5,6}$", ErrorMessage = "Zipcode must be 5 or 6 digits.")]
+    public string? Zipcode { get; set; }
+
 
     [Required(ErrorMessage = "Address is required")]
-    public string Address { get; set; }
+    public string? Address { get; set; }
 
     public string? Profileimagepath { get; set; }
 }

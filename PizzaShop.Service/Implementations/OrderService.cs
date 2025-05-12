@@ -45,9 +45,9 @@ public class OrderService : IOrderService
         OrdersListViewModel model = await _orderRepository.GetOrdersForExport(searchTerm, statusLog, timeLog);
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-        using (ExcelPackage package = new ExcelPackage())
+        using (ExcelPackage package = new())
         {
-            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("model");
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Orders");
 
             Color headerColor = ColorTranslator.FromHtml("#0568A8");
             Color borderColor = Color.Black; // Black border
@@ -144,7 +144,6 @@ public class OrderService : IOrderService
             int row = 10;
             foreach (var order in model.orders)
             {
-
                 worksheet.Cells[$"A{row}"].Value = order.Orderid;
                 worksheet.Cells[$"A{row}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 worksheet.Cells[$"A{row}"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
@@ -188,9 +187,7 @@ public class OrderService : IOrderService
 
                 row++;
             }
-
             worksheet.Cells.AutoFitColumns();
-
             return package.GetAsByteArray();
         }
     }
@@ -206,29 +203,11 @@ public class OrderService : IOrderService
         model.tables = await _orderRepository.GetTablesByOrderId(order.tableId);
         model.items = await _orderRepository.GetItemsByOrderId(orderId);
         model.modifiers = await _orderRepository.GetModifiersByOrderId(orderId);
-        model.Taxes = await _taxService.GetTaxes();
+        model.Taxes = await _taxService.GetTaxesByOrderId(orderId);
         model.order.TotalAmount = model.Taxes.Sum(ta => ta.TaxAmount) ?? 0;
 
-        model.order.SubTotal = model.items.Sum(i => i.OrderTotalAmount) + model.modifiers.Sum(i => i.OrderTotalAmount) ?? 0;
-        // model.order.TaxAmount =  model.Taxes.First(t => )
+        // model.order.SubTotal = model.items.Sum(i => i.OrderTotalAmount) + model.modifiers.Sum(i => i.OrderTotalAmount) ?? 0;
 
-        // decimal subtotal = order.OrderItemsMappings.Sum(oi =>
-        //     (oi.Quantity * oi.Price) +
-        //     (oi.OrderItemModifiers?.Sum(m => m.Quantity * m.Price) ?? 0)
-        // );
-        // decimal? subtotal = model.items.Sum(op => op.OrderPrice);
-        // var orderTax = model.Taxes
-        //                     .Where(t => t.Isenable == true)
-        //                     .Select(t => new TaxViewModel
-        //                     {
-        //                         TaxName = t.TaxName,
-        //                         TaxValue = t.TaxValue,
-        //                         // TaxAmount = ot.TaxAmount
-        //                         TaxAmount = t.TaxType == "Percentage"
-        //                                     ? Math.Round((t.TaxValue / 100) * subtotal, 2) 
-        //                                     : Math.Round(t.TaxValue, 2) 
-        //                     }).ToList();
-        // model.order.TotalAmount =  
         return model;
     }
 

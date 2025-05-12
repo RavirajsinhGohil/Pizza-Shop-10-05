@@ -162,10 +162,10 @@ public class OrderRepository : IOrderRepository
             CurrentPage = page,
             totalItems = totalItems,
             TotalPages = totalPages,
-            PageSize = pageSize
+            PageSize = pageSize,
+            FromRec = (page - 1) * pageSize + 1,
+            ToRec = Math.Min(page * pageSize, totalItems)
         };
-
-
     }
 
     public async Task<OrdersListViewModel> GetOrdersForExport(string searchTerm, string statusLog, string timeLog)

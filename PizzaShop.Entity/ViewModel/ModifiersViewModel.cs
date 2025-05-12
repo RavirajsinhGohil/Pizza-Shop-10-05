@@ -8,18 +8,18 @@ public class ModifiersViewModel
     public int? ModifierGroupId { get; set; }
     public string? ModifierGroupName { get; set; }
     
-    [Required(ErrorMessage = "Modifier Name is required")]
+    [Required(ErrorMessage = "Name is required")]
     public string? Name { get; set; }
     
-    [Required(ErrorMessage = "Modifier Unit is required")]
+    [Required(ErrorMessage = "Unit is required")]
     public string? Unit { get; set; }
 
-    [Required(ErrorMessage = "Modifier Rate is required")]
+    [Required(ErrorMessage = "Rate is required")]
     [Range(0.01, 1000, ErrorMessage = "Rate must be between 0.01 and 1000.")]
     public decimal? Rate { get; set; }
 
-    [Required(ErrorMessage = "Modifier Quantity is required")]
-    [Range(0.01, 1000, ErrorMessage = "Rate must be between 0.01 and 10,000.")]
+    [Required(ErrorMessage = "Quantity is required")]
+    [Range(0.01, 1000, ErrorMessage = "Quantity must be between 0.01 and 10,000.")]
     public decimal? Quantity { get; set; }
     public string? Description { get; set; }
     public bool Isdeleted { get; set; }

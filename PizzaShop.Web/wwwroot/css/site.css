@@ -78,9 +78,15 @@ body {
   background-color: transparent;
 }
 
-#modal-backdrop::-webkit-scrollbar {
+/* #modal-backdrop::-webkit-scrollbar {
   display: none;
+} */
+
+.modal-backdrop {
+  background-color: rgba(78, 77, 77, 0.1) !important;
+  /* opacity: 0.1; */
 }
+
 
 @media (max-width: 700px) {
   .offcanvas.show~#main-content {
@@ -115,19 +121,10 @@ body {
   }
 }
 
-.modal {
-  /* background: linear-gradient( rgb(255, 255, 255), transparent) !important; */
-}
-
-
-.modal {
-  /* background: linear-gradient(1deg, rgb(170, 179, 204), transparent); */
-}
-
-.modal-backdrop {
+/* .modal-backdrop {
   background: transparent;
   width: 0;
-}
+} */
 
 .search-user {
   max-width: 100%;
@@ -314,14 +311,14 @@ new table style
   color: black;
 }
 
-
+/* 
 .modal-header {
   border-bottom: navy;
 }
 
 .modal-footer {
   border-top: none;
-}
+} */
 
 /* -------------------------- */
 /* Roles */

@@ -167,7 +167,7 @@ $(document).ready(function () {
         var selectedItems = document.querySelectorAll(".ItemsCheck:checked");
         if (selectedItems.length === 0) {
             e.preventDefault();
-            toastr.warning("Please select item(s) to delete.", "Warning");
+            toastr.error("Please select item(s) to delete.");
         }
         else {
             var MyModal = new bootstrap.Modal(document.getElementById('bulkDeleteModal'));
@@ -179,7 +179,7 @@ $(document).ready(function () {
         var selectedItems = document.querySelectorAll(".ModifiersCheck:checked");
         if (selectedItems.length === 0) {
             e.preventDefault();
-            toastr.warning("Please select modifier(s) to delete.", "Warning");
+            toastr.error("Please select modifier(s) to delete.");
         }
         else {
             var MyModal = new bootstrap.Modal(document.getElementById('bulkDeleteModifiersModal'));
@@ -330,25 +330,6 @@ $(document).on("change", ".rowModifierCheck", function () {
     }
 });
 
-$(document).on('click', "#saveAddExistingModifiers", function () {
-    $('#addExistingModifiersModal').modal('hide');
-    $('#editModifierGroup').modal('show');
-    $("#addExistingModal").modal("hide");
-    $('#existingModifiersContainer').empty();
-
-    // Append new modifiers
-    selectedModifiers.forEach(function (modifierName, modifierId) {
-        $('#existingModifiersContainer').append(
-            `<div class="d-flex align-items-center bg-info rounded-pill mt-2 me-2">
-                <div class="d-flex m-2 existingModifier">${modifierName}</div>
-                <button type="button" class="btn-close removeModifierBtn" data-id="${modifierId}" aria-label="Close"></button>
-            </div>`
-        );
-    });
-});
-
-
-
 $(document).on('click', '#editModifierGroupBtn', function (e) {
     e.preventDefault();
     var ModifierGroupId = $(this).data('id');
@@ -375,26 +356,23 @@ $(document).on('click', '#editModifierGroupBtn', function (e) {
                 // Append new modifiers
                 selectedModifiers.forEach(function (modifierName, modifierId) {
                     $('#existingModifiersContainer').append(
-                        `<div class="d-flex align-items-center bg-info rounded-pill mt-2 me-2">
-                        <div class="d-flex m-2 existingModifier">${modifierName}</div>
-                        <button type="button" class="btn-close removeModifierBtn" data-id="${modifierId}" aria-label="Close"></button>
+                        `<div class="d-flex align-items-center modifierInEditModal_${modifierId} border rounded-pill mb-2 me-2">
+                        <div class="d-flex m-2 existingModifier ">${modifierName}</div>
+                        <button type="button" class="btn-close removeModifierBtnEdit_${modifierId}" data-id="${modifierId}" aria-label="Close"></button>
                     </div>`
                     );
-                });
-                $(document).on('click', '.removeModifierBtn', function (e) {
-                    e.preventDefault();
 
-                    let unCheckModifierId = $(this).data('id');
-                    selectedModifiers.delete(unCheckModifierId);
-
+                    $(document).on('click', `.removeModifierBtnEdit_${modifierId}`, function (e) {
+                        e.preventDefault();
+                        let unCheckModifierId = $(this).data('id');
+                        selectedModifiers.delete(unCheckModifierId);
+                        existingModifiers = existingModifiers.filter(id => id !== unCheckModifierId);
+                        $(`.modifierInEditModal_${unCheckModifierId}`).remove();
+                    });
                 });
 
                 //For adding the selected Modifiers in Edit Modifier Group
                 // $("#editModifierGroupForm").on('submit', function() {
-
-
-
-
 
                 // });
 
@@ -426,18 +404,18 @@ $(document).on('click', '#editModifierGroupBtn', function (e) {
                         }
                     },
                     submitHandler: function (form) {
+                        debugger;
                         let modifierGroupName = $("#modifierGroupName").val();
                         let modifierGroupDescription = $("#modifierGroupDescription").val();
                         jsonString = JSON.stringify(jsonString);
-                        var formData = jsonString
+                        var formData = JSON.stringify(existingModifiers);
 
                         $.ajax({
-                            url: `AddSelectedModifiers?modifierGroupId=${encodeURIComponent(response.data.modifierGroupId)}&name=${modifierGroupName}&description=${modifierGroupDescription}`,
-                            // @* url: '@Url.Action("AddSelectedModifiers")' + '?modifierGroupId=' + encodeURIComponent(response.data.modifierGroupId), *@
+                            url: `/Menu/AddSelectedModifiers?modifierGroupId=${encodeURIComponent(response.data.modifierGroupId)}&name=${modifierGroupName}&description=${modifierGroupDescription}`,
                             type: 'POST',
                             data: formData,
                             contentType: 'application/json',
-                            success: function () {
+                            success: function (response) {
                                 $('#editModifierGroup').modal('hide');
                                 toastr.success(response.message);
                             },
@@ -458,31 +436,6 @@ $(document).on('click', '#editModifierGroupBtn', function (e) {
         }
     });
 });
-
-// @* $('#addExistingModifiersModal').modal('hide'); *@
-$(document).on('click', '#addExistingModifiersBtn', function () {
-    addExistingModifiers(selectedModifiers);
-});
-
-function addExistingModifiers(selectedModifiers) {
-    $('#editModifierGroup').modal('hide'); // Close Edit Modifier Group Modal
-    $("#addExistingModifiersForm").trigger('reset');
-    $('#addExistingModifiersModal').modal('show'); // Open Add Existing Modifiers Modal
-
-    //For checking the checkboxes for row of the addExistingModifiers
-    var rowModifierGroupCheckBoxes = document.querySelectorAll('.rowModifierCheck');
-
-    document.querySelectorAll("rowModifierCheck").forEach(checkBox => {
-        checkBox.checked = false;
-    });
-
-    // For check all existing Modifiers
-    selectedModifiers.forEach(function (modifierName, modifierId) {
-        if (existingModifiers.includes(modifierId)) {
-            document.querySelector(`.rowModifierCheck[data-id="${modifierId}"]`).checked = true;
-        }
-    });
-}
 
 // Trigger the AJAX call when the edit link is clicked
 $('body').on('click', '.edit-icon-modifier', function (e) {
@@ -667,84 +620,6 @@ $(document).on('click', "#confirmBulkDeleteModifiersBtn", function () {
 
 // @* ************* *@
 
-var allModifierIds = [];
-
-$('.modifiersIdsForAdd').each(function () {
-    var modifierId = $(this).data('id');
-    if (modifierId !== undefined) {
-        allModifierIds.push(modifierId);
-    }
-});
-
-
-allModifierIds.forEach(function (modifierId) {
-    $(document).off("change", `.rowModifierCheckForAdd_${modifierId}`); // For remove event listners from previous edit modifierGroup
-    $(document).on("change", `.rowModifierCheckForAdd_${modifierId}`, function () {
-        let modifierId = $(this).data('id');
-        let modifierName = $(this).data('name');
-
-        if ($(this).is(":checked")) {
-            selectedModifiersForAdd.set(modifierId, modifierName);
-            jsonStringForAdd.push(modifierId);
-            existingModifiersForAdd.push(modifierId);
-        } 
-        else {
-            debugger;
-            selectedModifiersForAdd.delete(modifierId);        
-            jsonStringForAdd = jsonStringForAdd.filter(id => id !== modifierId);         
-            existingModifiersForAdd = existingModifiersForAdd.filter(id => id !== modifierId);
-        }
-    });
-});
-
-//For open modal on add existing modifiers in add modifier group modal
-$(document).on('click', "#addModifiersInGroup", function () {
-    $('#addModifierGroupModal').modal('hide');
-    $("#addExistingModifiersForm").trigger('reset');
-    $('#addExistingModal').modal('show');
-
-    //For checking the checkboxes for row of the addExistingModifiers
-    var rowModifierGroupCheckBoxes = document.querySelectorAll('.rowModifierCheckForAdd');
-
-    //Not useful while using $("#addExistingModifiersForm").trigger('reset');
-    document.querySelectorAll("rowModifierCheckForAdd").forEach(checkBox => {
-        checkBox.checked = false;
-    });
-
-    // For check all existing Modifiers
-    selectedModifiersForAdd.forEach(function (modifierName, modifierId) {
-        if (existingModifiersForAdd.includes(modifierId)) {
-            if(modifierId !== undefined) {
-                document.querySelector(`.modifiersIdsForAdd[data-id="${modifierId}"]`).checked = true;
-            }
-        }
-    });
-});
-
-//On save modal of addExisting Modifiers in Add Modifier Group
-$(document).on('click', "#saveAddExistingModifiersForAdd", function () {
-    $('#addExistingModal').modal('hide');
-    $('#addModifierGroupModal').modal('show');
-
-    $('#existingModifiersContainerForAdd').empty();
-
-    // Append new modifiers For Add
-    selectedModifiersForAdd.forEach(function (modifierName, modifierId) {
-        $('#existingModifiersContainerForAdd').append(
-            `<div class="d-flex align-items-center modifierInAddModal_${modifierId} bg-info rounded-pill mt-2 me-2">
-                <div class="d-flex m-2 existingModifier">${modifierName}</div>
-                <button type="button" class="btn-close removeModifierBtn_${modifierId}" data-id="${modifierId}" aria-label="Close"></button>
-            </div>`
-        );
-        $(document).on('click', `.removeModifierBtn_${modifierId}`, function (e) {
-            e.preventDefault();
-            let unCheckModifierId = $(this).data('id');
-            selectedModifiersForAdd.delete(unCheckModifierId);
-            existingModifiersForAdd = existingModifiersForAdd.filter(id => id !== unCheckModifierId);
-            $(`.modifierInAddModal_${unCheckModifierId}`).remove();
-        });
-    });
-});
 
 
 var modifierGroupForAdd = [];
@@ -770,7 +645,7 @@ $(document).on('change', "#ModifierGroupsInNewItemSelect", function () {
                             ${modifier.rate}
                         </div>
                     </div>
-                `).join(""); 
+                `).join("");
 
                 $("#ModifierGroupsInNewItemModal").append(
                     `<div  class="mt-2 appendModifierGroupInNewItem_${response.data.modifierGroupId}">
@@ -1035,7 +910,7 @@ $(document).on('change', "#ModifierGroupsInEditItemSelect", function () {
                             ${modifier.rate}
                         </div>
                     </div>
-                `).join(""); 
+                `).join("");
 
                 $("#ModifierGroupsInEditItemModal").append(
                     `<div  class="mt-2 appendModifierGroupInEditItem_${response.data.modifierGroupId}">
@@ -1049,7 +924,7 @@ $(document).on('change', "#ModifierGroupsInEditItemSelect", function () {
                     <div>
                         <div class="row">
                             <div class="col-6">
-                                <select class="form-select rounded-pill modifierForEditItemSelectMin" data-id="${response.data.modifierGroupId}">
+                                <select class="form-select rounded-pill modifierForEditItemSelectMin modifierForItemSelect" data-id="${response.data.modifierGroupId}">
                                     <option value="" selected>0</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -1057,7 +932,7 @@ $(document).on('change', "#ModifierGroupsInEditItemSelect", function () {
                                 </select>
                             </div>
                             <div class="col-6">
-                                <select class="form-select rounded-pill modifierForEditItemSelectMax" data-id="${response.data.modifierGroupId}">
+                                <select class="form-select rounded-pill modifierForEditItemSelectMax modifierForItemSelect" data-id="${response.data.modifierGroupId}">
                                     <option value="" selected>0</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -1093,15 +968,15 @@ $('body').on('submit', '#editMenuItemForm', function (e) {
     if (!$(this).valid()) {
         return;
     }
-    
-    debugger
+
     var formData = new FormData(this);
 
     var internChoice = $('#editItemType option:selected').val();
     formData.set("Item.Itemtype", internChoice);
 
-    let customSwitch = $(".editItemAvailable").is(":checked");
-    formData.set("Item.Isavailable", customSwitch);
+    let customSwitch = $("#editItemAvailable").is(":checked");
+    formData.set("Item.Isavailable", customSwitch); 
+    console.log("customSwitch: ", customSwitch);
 
     modifierGroupForEdit.forEach(function (modifierGroupId, index) {
         var min = parseInt($(`.modifierForEditItemSelectMin[data-id="${modifierGroupId}"]`).val()) || 0;
@@ -1111,7 +986,7 @@ $('body').on('submit', '#editMenuItemForm', function (e) {
         formData.append(`Item.ModifierGroupData[${index}].Min`, min);
         formData.append(`Item.ModifierGroupData[${index}].Max`, max);
     });
-    
+
     //modifierGroupIds without deletion even if click on trash icon
     var modifierGroupIds = [];
     var abc = $("#editItemModifierGroupIdsForEdit").val();
@@ -1123,9 +998,9 @@ $('body').on('submit', '#editMenuItemForm', function (e) {
             count++;
         });
     }
-    
+
     let editImagePath = $("#editItemImage").val();
-    
+
 
     $.ajax({
         url: 'Menu/EditMenuItem',
@@ -1179,7 +1054,7 @@ $("#addNewModifierForm").submit(function (e) {
         $("#ModifierGroupIdsError").text("At least one Modifier Group must be selected.");
         return;
     }
-    
+
     if ($(this).data("edit-mode") === true) {
         updateModifier();
     } else {
@@ -1201,7 +1076,7 @@ function addModifier() {
         Ids: selectedIds
     };
     let ab = $("#addNewModifierForm").serialize();
-    
+
     var formData = new FormData();
     formData = JSON.stringify(newModifierData);
 
@@ -1212,17 +1087,22 @@ function addModifier() {
         data: formData,
         success: function (response) {
             if (response.success) {
-                $('#EditItemModal').modal('hide');
+                $('#addModifierModal').modal('hide');
                 $('.modal-backdrop').remove();
                 $('body').removeClass('modal-open');
                 toastr.success(response.message);
-                location.reload();
             }
             else {
+                $('#addModifierModal').modal('hide');
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
                 toastr.error(response.message);
             }
         },
         error: function (xhr, status, error) {
+            $('#addModifierModal').modal('hide');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
             console.error('Error:', error);
         }
     });
@@ -1243,7 +1123,7 @@ function loadModifiers(pageNumber, pageSize) {
                 var modifierId = $(`.modifiersIdsForAdd[data-id="${modifierId}"]`).data('id');
                 // var modifierInput = $(`.rowModifierCheckForAdd_"${modifierId}"]`);
                 // modifierInput.checked = true;
-                if(modifierId !== undefined) {
+                if (modifierId !== undefined) {
                     document.querySelector(`.modifiersIdsForAdd[data-id="${modifierId}"]`).checked = true;
                 }
             }
@@ -1274,9 +1154,77 @@ function bindPaginationEvents() {
     });
 
     $('#pageSizesForAddExistingModifiers').off('change').on('change', function () {
-        loadModifiers(1, $(this).val()); // Reset to the first page
+        loadModifiers(1, $(this).val());
     });
 }
+
+var allModifierIds = [];
+$('.modifiersIdsForAdd').each(function () {
+    var modifierId = $(this).data('id');
+    if (modifierId !== undefined) {
+        allModifierIds.push(modifierId);
+    }
+});
+
+allModifierIds.forEach(function (modifierId) {
+    $(document).off("change", `.rowModifierCheckForAdd_${modifierId}`); // For remove event listners from previous edit modifierGroup
+    $(document).on("change", `.rowModifierCheckForAdd_${modifierId}`, function () {
+        let modifierId = $(this).data('id');
+        let modifierName = $(this).data('name');
+
+        if ($(this).is(":checked")) {
+            selectedModifiersForAdd.set(modifierId, modifierName);
+            jsonStringForAdd.push(modifierId);
+            existingModifiersForAdd.push(modifierId);
+        }
+        else {
+            selectedModifiersForAdd.delete(modifierId);
+            jsonStringForAdd = jsonStringForAdd.filter(id => id !== modifierId);
+            existingModifiersForAdd = existingModifiersForAdd.filter(id => id !== modifierId);
+        }
+    });
+});
+
+//For open modal on add existing modifiers in add modifier group modal
+$(document).on('click', "#addModifiersInGroup", function () {
+    $('#addModifierGroupModal').modal('hide');
+    $("#addExistingModifiersForm").trigger('reset');
+    $('#addExistingModal').modal('show');
+
+    // For check all existing Modifiers
+    selectedModifiersForAdd.forEach(function (modifierName, modifierId) {
+        if (existingModifiersForAdd.includes(modifierId)) {
+            if (modifierId !== undefined) {
+                document.querySelector(`.modifiersIdsForAdd[data-id="${modifierId}"]`).checked = true;
+            }
+        }
+    });
+});
+
+//On save modal of addExisting Modifiers in Add Modifier Group
+$(document).on('click', "#saveAddExistingModifiersForAdd", function () {
+    $('#addExistingModal').modal('hide');
+    $('#addModifierGroupModal').modal('show');
+
+    $('#existingModifiersContainerForAdd').empty();
+
+    // Append new modifiers For Add
+    selectedModifiersForAdd.forEach(function (modifierName, modifierId) {
+        $('#existingModifiersContainerForAdd').append(
+            `<div class="d-flex align-items-center modifierInAddModal_${modifierId} border rounded-pill mb-2 me-2">
+                <div class="d-flex m-2 existingModifier">${modifierName}</div>
+                <button type="button" class="btn-close removeModifierBtn_${modifierId}" data-id="${modifierId}" aria-label="Close"></button>
+            </div>`
+        );
+        $(document).on('click', `.removeModifierBtn_${modifierId}`, function (e) {
+            e.preventDefault();
+            let unCheckModifierId = $(this).data('id');
+            selectedModifiersForAdd.delete(unCheckModifierId);
+            existingModifiersForAdd = existingModifiersForAdd.filter(id => id !== unCheckModifierId);
+            $(`.modifierInAddModal_${unCheckModifierId}`).remove();
+        });
+    });
+});
 
 // Initialize pagination when the modal is shown
 $('#addExistingModal').on('shown.bs.modal', function () {
@@ -1287,12 +1235,192 @@ $('#addExistingModal').on('shown.bs.modal', function () {
 function openAddModifierGroupModal() {
     $("#addModifierGroupModal").modal("show");
 }
-function openAddExistingModifiersModal() {
-    $("#addModifierGroupModal").modal("hide");
-    $("#addExistingModal").modal("show");
 
-    //For checking the checkboxes for row of the addExistingModifiers
-    var rowModifierGroupCheckBoxes = document.querySelectorAll('.rowModifierCheckForAdd');
+// function openAddExistingModifiersModal() {
+//     $("#addModifierGroupModal").modal("hide");
+//     $("#addExistingModal").modal("show");
 
+//     //For checking the checkboxes for row of the addExistingModifiers
+//     var rowModifierGroupCheckBoxes = document.querySelectorAll('.rowModifierCheckForAdd');
+// }
 
+function openEditModifierGroupModal(modifierGroup) {
+    console.log(modifierGroup);
+    $("#editModifierGroup").modal("show");
 }
+
+
+// @* $('#addExistingModifiersModal').modal('hide'); *@
+// $(document).on('click', '#addExistingModifiersBtn', function () {
+//     addExistingModifiers(selectedModifiers);
+// });
+
+// function addExistingModifiers(selectedModifiers) {
+//     $('#editModifierGroup').modal('hide'); // Close Edit Modifier Group Modal
+//     $("#addExistingModifiersForm").trigger('reset');
+//     $('#addExistingModifiersModal').modal('show'); // Open Add Existing Modifiers Modal
+
+//     //For checking the checkboxes for row of the addExistingModifiers
+//     var rowModifierGroupCheckBoxes = document.querySelectorAll('.rowModifierCheck');
+
+//     document.querySelectorAll("rowModifierCheck").forEach(checkBox => {
+//         checkBox.checked = false;
+//     });
+
+//     // For check all existing Modifiers
+//     selectedModifiers.forEach(function (modifierName, modifierId) {
+//         if (existingModifiers.includes(modifierId)) {
+//             document.querySelector(`.rowModifierCheck[data-id="${modifierId}"]`).checked = true;
+//         }
+//     });
+// }
+
+function openAddExistingModifiersForEdit() {
+    $('#editModifierGroup').modal('hide'); // Close Edit Modifier Group Modal
+    $("#addExistingModifiersForm").trigger('reset');
+    $('#addExistingModifiersModal').modal('show'); // Open Add Existing Modifiers Modal
+
+    loadModifiersForEdit(1, $("#pageSizesForAddExistingModifiersEdit").val());
+
+    // For check all existing Modifiers when append the selected checkboxes
+    selectedModifiers.forEach(function (modifierName, modifierId) {
+        if (existingModifiersForAdd.includes(modifierId)) {
+            if (modifierId !== undefined) {
+                document.querySelector(`.modifiersIdsForAdd[data-id="${modifierId}"]`).checked = true;
+            }
+        }
+    });
+}
+
+function loadModifiersForEdit(pageNumber, pageSize) {
+    $.ajax({
+        url: '/Menu/GetModifiersForExistingModifiersForEdit',
+        type: 'GET',
+        data: { pageNumber: pageNumber, pageSize: pageSize },
+        success: function (response) {
+            console.log("Hello");
+
+            $("#existingModifiersForEditGroupTable").empty();
+            $('#existingModifiersForEditGroupTable').html(response);
+            bindPaginationEventsForEdit();
+
+            // For check all existing Modifiers
+            existingModifiers.forEach(function (modifierId) {
+                var modifierId = $(`.modifiersIdsForEdit[data-id="${modifierId}"]`).data('id');
+                // var modifierInput = $(`.rowModifierCheckForAdd_"${modifierId}"]`);
+                // modifierInput.checked = true;
+                if (modifierId !== undefined) {
+                    document.querySelector(`.modifiersIdsForEdit[data-id="${modifierId}"]`).checked = true;
+                }
+            }
+            );
+        },
+        error: function () {
+            console.error('Failed to load data.');
+        }
+    });
+}
+
+function bindPaginationEventsForEdit() {
+    var currentPage = $("#currentPageForExistingModifiersEdit").val();
+    var totalPages = $("#totalPagesForExistingModifiersEdit").val();
+    var totalItems = $("#totalItemsForExistingModifiersEdit").val();
+
+    $('#prevPageForAddExistingModifiersEdit').off('click').on('click', function () {
+        if (currentPage > 1) {
+            loadModifiersForEdit(currentPage - 1, $('#pageSizesForAddExistingModifiersEdit').val());
+        }
+    });
+
+    $('#nextPageForAddExistingModifiersEdit').off('click').on('click', function () {
+        if (currentPage < totalPages) {
+            currentPage = parseInt(currentPage) + 1;
+            loadModifiersForEdit(currentPage, $('#pageSizesForAddExistingModifiersEdit').val());
+        }
+    });
+
+    $('#pageSizesForAddExistingModifiersEdit').off('change').on('change', function () {
+        loadModifiersForEdit(1, $(this).val());
+    });
+}
+
+var allModifierIdsForEdit = [];
+$('.modifiersIdsForEdit').each(function () {
+    var modifierId = $(this).data('id');
+    if (modifierId !== undefined) {
+        allModifierIdsForEdit.push(modifierId);
+    }
+});
+
+allModifierIdsForEdit.forEach(function (modifierId) {
+    $(document).off("change", `.rowModifierCheck_${modifierId}`); // For remove event listners from previous edit modifierGroup
+    $(document).on("change", `.rowModifierCheck_${modifierId}`, function () {
+        let modifierId = $(this).data('id');
+        let modifierName = $(this).data('name');
+
+        if ($(this).is(":checked")) {
+            selectedModifiers.set(modifierId, modifierName);
+            jsonString.push(modifierId);
+            existingModifiers.push(modifierId);
+        }
+        else {
+            selectedModifiers.delete(modifierId);
+            jsonString = jsonStringForAdd.filter(id => id !== modifierId);
+            existingModifiers = existingModifiers.filter(id => id !== modifierId);
+        }
+    });
+});
+
+$(document).on('click', "#saveAddExistingModifiers", function () {
+    $('#addExistingModifiersModal').modal('hide');
+    $('#editModifierGroup').modal('show');
+    $('#existingModifiersContainer').empty();
+
+    // Append new modifiers
+    selectedModifiers.forEach(function (modifierName, modifierId) {
+        $('#existingModifiersContainer').append(
+            `<div class="d-flex align-items-center modifierInEditModal_${modifierId} border rounded-pill mb-2 me-2">
+                <div class="d-flex m-2 existingModifier">${modifierName}</div>
+                <button type="button" class="btn-close removeModifierBtnEdit_${modifierId}" data-id="${modifierId}" aria-label="Close"></button>
+            </div>`
+        );
+
+        console.log("selectedModifiers", selectedModifiers);
+        console.log("existingModifiers", existingModifiers);
+        console.log("selectedModifiers", selectedModifiers);
+
+        $(document).on('click', `.removeModifierBtnEdit_${modifierId}`, function (e) {
+            e.preventDefault();
+            let unCheckModifierId = $(this).data('id');
+            selectedModifiers.delete(unCheckModifierId);
+            existingModifiers = existingModifiers.filter(id => id !== unCheckModifierId);
+            $(`.modifierInEditModal_${unCheckModifierId}`).remove();
+        });
+    });
+
+
+});
+
+//On save modal of addExisting Modifiers in Edit Modifier Group
+$(document).on('click', "#saveAddExistingModifiersForAdd", function () {
+    $('#addExistingModal').modal('hide');
+    $('#addModifierGroupModal').modal('show');
+    $('#existingModifiersContainerForAdd').empty();
+
+    // Append new modifiers For Add
+    selectedModifiersForAdd.forEach(function (modifierName, modifierId) {
+        $('#existingModifiersContainerForAdd').append(
+            `<div class="d-flex align-items-center modifierInAddModal_${modifierId} border rounded-pill mb-2 me-2">
+                <div class="d-flex m-2 existingModifier">${modifierName}</div>
+                <button type="button" class="btn-close removeModifierBtn_${modifierId}" data-id="${modifierId}" aria-label="Close"></button>
+            </div>`
+        );
+        $(document).on('click', `.removeModifierBtn_${modifierId}`, function (e) {
+            e.preventDefault();
+            let unCheckModifierId = $(this).data('id');
+            selectedModifiersForAdd.delete(unCheckModifierId);
+            existingModifiersForAdd = existingModifiersForAdd.filter(id => id !== unCheckModifierId);
+            $(`.modifierInAddModal_${unCheckModifierId}`).remove();
+        });
+    });
+});

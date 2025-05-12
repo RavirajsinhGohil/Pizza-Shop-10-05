@@ -51,15 +51,25 @@ public class UserController : Controller
             bool isAdded = await _userService.AddUser(model);
             if (isAdded)
             {
-                string filePath = @"C:\Users\pct216\Downloads\Pizza Shop\Main Project\Pizza Shop\PizzaShop.Web\EmailTemplate\AddUserEmailTemplate.html";
-                string emailBody = System.IO.File.ReadAllText(filePath);
+                string filePath = @"C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Web\EmailTemplate\AddUserEmailTemplate.html";
+                // string filePath = @"C:\Users\pct216\Downloads\Pizza Shop\Main Project\Pizza Shop\PizzaShop.Web\EmailTemplate\AddUserEmailTemplate.html";
+                if (!System.IO.File.Exists(filePath))
+                {
+                    TempData["success"] = Constants.NewUserCreated;
+                    return RedirectToAction("UserList", "User");
+                }
+                else
+                {
+                    string emailBody = System.IO.File.ReadAllText(filePath);
 
-                emailBody = emailBody.Replace("{abc123}", model.Username);
-                emailBody = emailBody.Replace("{abc@123}", model.Password);
-                // emailBody = emailBody.Replace("{image}", Constants.PizzaShopLogoURL);
+                    emailBody = emailBody.Replace("{abc123}", model.Username);
+                    emailBody = emailBody.Replace("{abc@123}", model.Password);
+                    // emailBody = emailBody.Replace("{image}", Constants.PizzaShopLogoURL);
 
-                string subject = "User Details";
-                _authService.SendEmailAsync(model.Email, subject, emailBody);
+                    string subject = "User Details";
+                    _authService.SendEmailAsync(model.Email, subject, emailBody);
+                }
+
                 TempData["success"] = Constants.NewUserCreated;
                 return RedirectToAction("UserList", "User");
             }
@@ -93,6 +103,7 @@ public class UserController : Controller
         {
             return NotFound();
         }
+
         TempData["success"] = Constants.UserUpdated;
 
         return RedirectToAction("UserList", "User");
@@ -122,7 +133,7 @@ public class UserController : Controller
     {
         ViewBag.SelectedRole = role;
         List<PermissionsViewModel>? permissions = await _userService.GetPermissionsByRoleAsync(role);
-        if(permissions == null)
+        if (permissions == null)
         {
             return new RedirectToRouteResult(new { Controller = "ErrorPages", action = "ShowError", statusCode = "404" });
         }
@@ -134,13 +145,13 @@ public class UserController : Controller
     {
         if (updatedPermissions == null || !updatedPermissions.Any())
         {
-            return Json(new { success = false, message = Constants.NotUpdatedPermissions});
+            return Json(new { success = false, message = Constants.NotUpdatedPermissions });
         }
         foreach (PermissionsViewModel? perm in updatedPermissions)
         {
             Console.WriteLine($"RoleId: {perm.RoleName}, PermissionId: {perm.PermissionName}, CanView: {perm.CanView}, CanEdit: {perm.CanAddEdit}, CanDelete: {perm.CanDelete}");
         }
-        
+
         bool result = await _userService.UpdateRolePermissionsAsync(updatedPermissions);
 
         return Json(new { success = result });

@@ -14,10 +14,10 @@ public class ItemViewModel
     [Range(0.01, 1000, ErrorMessage = "Rate must be greater than zero")]
     public decimal? Rate { get; set; }
 
-    [Required(ErrorMessage = "Please Select a Type")]
+    [Required(ErrorMessage = "Please select Type")]
     public string? Itemtype { get; set; }
 
-    [Required(ErrorMessage = "Please Select a Unit")]
+    [Required(ErrorMessage = "Please select Unit")]
     public string? Unit { get; set; }
 
     [Required(ErrorMessage = "Quantity is required")]
@@ -30,7 +30,7 @@ public class ItemViewModel
     public string? ItemShortCode { get; set; }
     public string? Description { get; set; }
 
-    [Required(ErrorMessage = "Please Select a Category")]
+    [Required(ErrorMessage = "Please select Category")]
     public int? CategoryId { get; set; }
     public string? CategoryName { get; set; }
     public bool Isdeleted { get; set; }
@@ -73,12 +73,6 @@ public class ModifierGorupDataViewModel
     public int? Min { get; set; }
     public int? Max { get; set; }
 }
-
-// public class MinMaxViewmodel
-// {
-//     public int? Min { get; set; }
-//     public int? Max { get; set; }
-// }
 
 
 

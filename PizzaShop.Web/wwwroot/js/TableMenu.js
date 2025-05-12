@@ -1,4 +1,23 @@
 $(document).ready(function () {
+
+    // Trigger logic only when modal is fully shown
+    $('#waitingTokenModal').on('shown.bs.modal', function (event) {
+        debugger
+        const button = event.relatedTarget; // Button that triggered the modal
+        const sectionId = button.getAttribute('data-section-id'); // Get section id from data attribute
+
+        // Reset the form
+        const form = document.getElementById("waitingTokenForm");
+        if (form) {
+            form.reset();
+            form.classList.remove('was-validated');
+        }
+
+        // Set the dropdown value in modal
+        $('#floatingSection').val(sectionId).change();
+    });
+
+
     // Handle form submission
     $("#assignTableForm").submit(function (event) {
         let isValid = true;
@@ -43,7 +62,7 @@ $(document).ready(function () {
         // Validate Section
         const sectionName = $("#SectionDropdown").val();
         if (!sectionName) {
-            $("#sectionValidation").text("Please select a section.");
+            $("#sectionValidation").text("Please select section.");
             isValid = false;
         }
 
@@ -60,24 +79,30 @@ $(document).ready(function () {
     }
 });
 
-const waitingTokenButtons = document.querySelectorAll(".btn-outline-primary");
+// const waitingTokenButtons = document.querySelectorAll(".btn-outline-primary");
 
-waitingTokenButtons.forEach(button => {
-    button.addEventListener("click", function () {
-        const sectionId = button.getAttribute("data-section-id");
+// waitingTokenButtons.forEach(button => {
+//     button.addEventListener("click", function () {
+//         debugger
+//         const sectionId = button.getAttribute("data-section-id");
 
-        const form = document.getElementById("waitingTokenForm");
-        form.reset(); // reset before setting dropdown
-        form.classList.remove('was-validated');
+//         const form = document.getElementById("waitingTokenForm");
+//         form.reset(); // reset before setting dropdown
+//         form.classList.remove('was-validated');
 
-        const dropdown = document.getElementById("floatingSection");
-        if (dropdown) {
-            dropdown.value = sectionId;
-            // Trigger change in case any validation or plugin is watching
-            dropdown.dispatchEvent(new Event('change'));
-        }
-    });
-});
+//         const dropdown = document.getElementById("floatingSection");
+//         // if (dropdown) {
+//         //     dropdown.value = sectionId;
+//         //     // Trigger change in case any validation or plugin is watching
+//         //     dropdown.dispatchEvent(new Event('change'));
+//         // }
+
+
+//     });
+// });
+
+
+
 
 
 
@@ -137,7 +162,7 @@ $("#waitingTokenForm").submit(function (event) {
     // Validate Section
     const sectionName = $("#SectionDropdown").val();
     if (!sectionName) {
-        $("#sectionValidation").text("Please select a section.");
+        $("#sectionValidation").text("Please select section.");
         isValid = false;
     }
 

@@ -108,13 +108,20 @@ public class SectionRepository : ISectionRepository
         return model;
     }
 
-
-
     // Add new Section
     public async Task<AuthResponse> AddSection(AddSectionViewModel model)
     {
         try
         {
+            var sectionCheck = _dbo.Sections.FirstOrDefault(s => s.Sectionname == model.SectionName);
+            if (sectionCheck != null)
+            {
+                return new AuthResponse
+                {
+                    Success = false,
+                    Message = "Section Already Exists!"
+                };
+            }
             var token = _httpContext.HttpContext.Request.Cookies["Token"];
             // var userid = _userservices.GetUserIdfromToken(token);
 
@@ -236,25 +243,15 @@ public class SectionRepository : ISectionRepository
         try
         {
             var token = _httpContext.HttpContext.Request.Cookies["Token"];
-            // var userid = _userservices.GetUserIdfromToken(token);
-
-            bool availability = true;
-
-            if(model.Status == "Available")
-            {
-                availability = true;
-            }
-            else
-            {
-                availability = false;
-            }
 
             var table = new Table
             {
                 Sectionid = model.SectionId,
                 Tablename = model.Name,
-                Capacity = model.Capacity,
-                Status= availability,
+                Capacity = model.Capacity ?? 0,
+                Status= true, // true => Available (When Table is created)
+                Newstatus = 1,  //  1=> Available, 2 = Assigned, 3 = Running
+                Isdeleted = false
                 // Createdby = userid
             };
 
@@ -289,21 +286,9 @@ public class SectionRepository : ISectionRepository
 
             var table = _dbo.Tables.FirstOrDefault(t => t.Tableid == model.TableId);
 
-            bool availability = true;
-
-            if(model.Status == "Available")
-            {
-                availability = true;
-            }
-            else
-            {
-                availability = false;
-            }
-
             table.Sectionid = model.SectionId;
             table.Tablename = model.Name;
-            table.Capacity = model.Capacity;
-            table.Status = availability;
+            table.Capacity = model.Capacity ?? 0;
             // table.Updatedby = userid;
 
 

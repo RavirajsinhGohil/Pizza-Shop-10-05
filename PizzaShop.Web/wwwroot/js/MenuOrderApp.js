@@ -34,6 +34,20 @@ $(document).ready(function () {
         const categoryId = categoryIdAttr === "all" ? null : parseInt(categoryIdAttr);
         loadItems(categoryId, $('#SearchItems').val());
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('orderId');
+
+    if (!orderId) {
+        // When modal opens, hide the Add To Order button if no orderId
+        const itemModal = document.getElementById('ItemsDetails');
+        itemModal.addEventListener('show.bs.modal', function () {
+            const addToOrderBtn = document.getElementById('addToOrderBtn');
+            if (addToOrderBtn) {
+                addToOrderBtn.style.display = 'none';
+            }
+        });
+    }
 });
 
 function toggleFavorite(itemId, icon) {

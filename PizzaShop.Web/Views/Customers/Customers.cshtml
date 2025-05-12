@@ -37,32 +37,30 @@
 <!-- Custom Date Modal -->
 <div class="modal fade" id="customDateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Select Date Range</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="d-flex">
-                    <div class="form-floating  me-4">
+                <div class="row g-3 mb-3">
+                    <div class="col form-floating ">
                         <input type="date" class="form-control dateFilter" id="fromDate" placeholder="name@example.com">
                         <label for="floatingInput">Start Date</label>
                         <span class="text-danger" id="fromDateValidation"></span>
                     </div>
 
-                    <div class="form-floating  me-4">
+                    <div class="col form-floating ">
                         <input type="date" class="form-control dateFilter" id="fromDate" placeholder="name@example.com">
                         <label for="floatingInput">End Date</label>
                         <span class="text-danger" id="toDateValidation"></span>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Submit</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn custom-btn-bg text-white">Submit</button>
+                <button type="button" class="btn custom-blue-color custom-blue-border" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
@@ -86,7 +84,6 @@
         fetchItems(searchTerm, 1, 5, sortBy, sortOrder, timeLog);
 
         function fetchItems(search = "", page = 1, pageSizeValue = 5, sortBy, sortOrder, timeLog) {
-
             $.ajax({
                 url: '@Url.Action("GetCustomerByPagination")',
                 type: 'GET',
@@ -96,7 +93,7 @@
                     pageSize: pageSizeValue,
                     sortBy: sortBy,
                     sortOrder: sortOrder,
-                    timeLog: timeLog,
+                    timeLog: timeLog
                 },
                 success: function (data) {
                     $("#customerList").html(data);
@@ -111,7 +108,7 @@
                     currentPage = page;
                     pageSize = pageSizeValue;
 
-                    updatePaginationButtons();
+                    @* updatePaginationButtons(); *@
                 },
                 error: function (xhr, status, error, data) {
                 }
@@ -119,11 +116,11 @@
             @* disableSortIcons(); *@
         }
 
-        function updatePaginationButtons() {
+        @* function updatePaginationButtons() {
             $('#prevPage').prop('disabled', currentPage <= 1);
             $('#nextPage').prop('disabled', currentPage >= totalPages);
             $('#currentPageDisplay').text(`Showing 1- ${pageSize} of ${totalItems}`);
-        }
+        } *@
 
         //  Handle Previous Page Click
         $(document).on('click', '#prevPage', function () {
@@ -178,7 +175,7 @@
                 var MyModal = new bootstrap.Modal(document.getElementById('customDateModal'));
                 MyModal.show();
                 //  Handle Submit Button Click
-                $(document).on('click', '.btn-primary', function () {
+                @* $(document).on('click', '.btn-primary', function () {
                     var fromDate = $('#fromDate').val();
                     var toDate = $('#toDate').val();
 
@@ -187,9 +184,9 @@
                         MyModal.hide();
                     }
                     else {
-                        alert("Please select both dates.");
+                        toastr.error("Please select both dates.");
                     }
-                });
+                }); *@
             }
             else {
                 fetchItems(searchTerm, 1, pageSize, sortBy, currentSortOrder, timeLog)
@@ -212,8 +209,7 @@
 
         $(document).on("click", '.customerHistoryBtn', function () {
             let customerId = $(this).data('id');
-
-
+            
             $.ajax({
                 url: '@Url.Action("CustomerHistory")',
                 type: 'GET',

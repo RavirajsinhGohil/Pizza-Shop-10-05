@@ -71,9 +71,9 @@ public class UserService : IUserService
         var query = _userRepository.GetUsersQuery();
 
         // Apply search filter
-        if (!string.IsNullOrEmpty(searchTerm))
+        if (!string.IsNullOrEmpty(searchTerm.Trim()))
         {
-            query = query.Where(u => u.Firstname.ToLower().Contains(searchTerm.ToLower()) || u.Lastname.ToLower().Contains(searchTerm.ToLower()) && u.Isdeleted == false);
+            query = query.Where(u => u.Firstname.Trim().ToLower().Contains(searchTerm.Trim().ToLower()) || u.Lastname.Trim().ToLower().Contains(searchTerm.Trim().ToLower()) && u.Isdeleted == false);
         }
 
         // Sorting logic
@@ -130,12 +130,10 @@ public class UserService : IUserService
             Role Rolename = _dbo.Roles.FirstOrDefault(r => r.Roleid == model.RoleId);
 
             model.Rolename = Rolename.ToString();
-            Task<int> index = _dbo.Users.CountAsync();
-            var totalUsers = await _userRepository.GetUsers().CountAsync();
-
+            
             var user = new User
             {
-                Userid = totalUsers + 1,
+                // Userid = totalUsers + 1,
                 Firstname = model.Firstname,
                 Lastname = model.Lastname,
                 Email = model.Email,
@@ -147,9 +145,10 @@ public class UserService : IUserService
                 States = model.State,
                 City = model.City,
                 Address = model.Address,
-                Zipcode = model.Zipcode,
+                // Zipcode = model.Zipcode,
                 Createdby = model.RoleId,
-                Status = model.Status
+                Status = "Active",
+                Isdeleted = false,
             };
 
             if (model.ProfileImage != null)

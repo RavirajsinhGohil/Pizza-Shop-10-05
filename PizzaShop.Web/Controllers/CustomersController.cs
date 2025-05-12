@@ -54,7 +54,7 @@ public class CustomersController : Controller
             };
 
             byte[] model = await _customerService.ExportDataInExcel(viewModel);
-            string fileName = $"Customers{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+            string fileName = $"Customers_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
 
             if (model == null || model.Length == 0)
             {

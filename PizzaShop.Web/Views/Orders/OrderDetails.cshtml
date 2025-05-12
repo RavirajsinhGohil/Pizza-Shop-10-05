@@ -1,3 +1,33 @@
+@{
+    decimal subtotal = 0;
+
+    int count = Model.items.Count;
+    for (int i = 0; i < count; i++)
+    {
+        subtotal += (decimal)(Model.items[i].OrderTotalAmount ?? 0);
+        subtotal += (decimal)(Model.modifiers[i].OrderTotalAmount ?? 0);
+    }
+    if (Model.modifiers != null && Model.modifiers.Count > 0)
+    {
+        int modifierCount = Model.modifiers.Count;
+        for (int i = 0; i < modifierCount; i++)
+        {
+            subtotal += (decimal)(Model.modifiers[i].OrderTotalAmount ?? 0);
+        }
+    }
+
+
+    decimal gst = 0, cgst = 0, sgst = 0;
+
+    if (Model.Taxes.Count > 0) gst = (decimal)Model.Taxes[0].TaxAmount;
+    if (Model.Taxes.Count > 1) cgst = (decimal)Model.Taxes[1].TaxAmount;
+    if (Model.Taxes.Count > 2) sgst = (decimal)Model.Taxes[2].TaxAmount;
+
+
+    decimal total = (decimal)subtotal + (decimal)gst + (decimal)cgst + (decimal)sgst;
+}
+
+
 @model PizzaShop.Entity.ViewModel.OrderDetailViewModel
 
 @{
@@ -57,7 +87,8 @@
             <div class="row mx-5 bg-white" style="border-radius: 5px;">
                 <div class=" d-flex justify-content-between mt-2">
                     <div class="fw-bold">
-                        Order Summary <span style="background-color: aqua; margin-left: 10px; padding: 2px">@Model.order.Status</span>
+                        Order Summary <span
+                            style="background-color: aqua; margin-left: 10px; padding: 2px">@Model.order.Status</span>
                     </div>
                     <a asp-controller="Orders" asp-action="OrderDetailPDF" asp-route-orderId="@Model.order.Orderid"
                         type="button" id="exportInvoice" data-orderid="@Model.order.Orderid"
@@ -158,47 +189,43 @@
                                     <td>@(i + 1)</td>
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <div>
-                                                @Model.items[i].Name
-                                            </div>
-                                            <div>
-                                                @Model.modifiers[i].Name
-                                            </div>
+                                            <div>@Model.items[i].Name</div>
+                                            @if (i < Model.modifiers.Count)
+                                            {
+                                                <div>@Model.modifiers[i].Name</div>
+                                            }
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <div>
-                                                @Model.items[i].OrderQuantity
-                                            </div>
-                                            <div>
-                                                @Model.modifiers[i].OrderQuantity
-                                            </div>
+                                            <div>@Model.items[i].OrderQuantity</div>
+                                            @if (i < Model.modifiers.Count)
+                                            {
+                                                <div>@Model.modifiers[i].OrderQuantity</div>
+                                            }
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <div>
-                                                @Model.items[i].OrderPrice
-                                            </div>
-                                            <div>
-                                                @Model.modifiers[i].OrderPrice
-                                            </div>
+                                            <div>@Model.items[i].OrderPrice</div>
+                                            @if (i < Model.modifiers.Count)
+                                            {
+                                                <div>@Model.modifiers[i].OrderPrice</div>
+                                            }
                                         </div>
-
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <div>
-                                                @Model.items[i].OrderTotalAmount
-                                            </div>
-                                            <div>
-                                                @Model.modifiers[i].OrderTotalAmount
-                                            </div>
+                                            <div>@Model.items[i].OrderTotalAmount</div>
+                                            @if (i < Model.modifiers.Count)
+                                            {
+                                                <div>@Model.modifiers[i].OrderTotalAmount</div>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
                             }
+
                         </tbody>
                     </table>
                 </div>
@@ -206,30 +233,42 @@
                     <div class="d-flex justify-content-between flex-column" style="width: 30% !important;">
 
 
-                        <div class="d-flex justify-content-between">
+
+
+                        @* <div class="d-flex justify-content-between">
                             <div>Subtotal:</div>
                             @Model.order.SubTotal
+                        </div> *@
+                        <div class="d-flex justify-content-between">
+                            <div>Subtotal:</div>
+                            @subtotal.ToString("0.00")
                         </div>
+
                         <div class="d-flex justify-content-between">
                             <div>CGST</div>
-                            @Model.Taxes[1].TaxAmount
+                            @cgst
                         </div>
                         <div class="d-flex justify-content-between">
                             <div>SGST</div>
-                            @Model.Taxes[2].TaxAmount
+                            @sgst
                         </div>
                         <div class="d-flex justify-content-between">
                             <div>GST</div>
-                            @Model.Taxes[0].TaxAmount
+                            @gst
                         </div>
                         <div class="d-flex justify-content-between">
                             <div>Other</div>
                             0.00
                         </div>
-                        <div class="d-flex justify-content-between">
+                        @* <div class="d-flex justify-content-between">
                             <div>Total:</div>
                             @Model.order.TotalAmount
+                        </div> *@
+                        <div class="d-flex justify-content-between">
+                            <div>Total:</div>
+                            @total.ToString("0.00")
                         </div>
+
                     </div>
                 </div>
             </div>

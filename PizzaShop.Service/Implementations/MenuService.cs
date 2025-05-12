@@ -274,7 +274,8 @@ public class MenuService : IMenuService
                     await _menuRepository.DeleteItemModifierGroupMappings(mapping);
                 }
             }
-            else {
+            else
+            {
                 await _menuRepository.DeleteItemModifierGroupMappings(mapping);
             }
         }
@@ -443,7 +444,21 @@ public class MenuService : IMenuService
             Description = description
         };
 
-        _menuRepository.UpdateModifierGroup(modifierGroup);
+        await _menuRepository.UpdateModifierGroup(modifierGroup);
+
+        List<ModifiersViewModel>? existingModifiers = await _menuRepository.GetExistingModifiersForEdit(modifierGroupId);
+        // Delete modifiers that are not in the selectedModifiers list
+        foreach (var existingModifier in existingModifiers)
+        {
+            if (!selectedModifiers.Contains(existingModifier.ModifierId))
+            {
+                Itemmodifiergroupmapping? mapping = _menuRepository.GetItemModifierGroupMappingsById(existingModifier.ModifierId, modifierGroupId);
+                if (mapping != null)
+                {
+                    await _menuRepository.DeleteItemModifierGroupMappings(mapping);
+                }
+            }
+        }
 
         for (int i = 0; i < selectedModifiers.Count; i++)
         {

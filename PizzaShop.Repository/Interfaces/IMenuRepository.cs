@@ -26,7 +26,7 @@ public interface IMenuRepository
     Task<List<Item>> GetModifiersForExistingModifiersForAdd(int pageNumber, int pageSize);
     Task<bool> AddModifierGroup(Modifiergroup modifiergroup);
     Modifiergroup GetModifierGroupById(int id);
-    bool UpdateModifierGroup(Modifiergroup model);
+    Task<bool> UpdateModifierGroup(Modifiergroup model);
     bool DeleteModifierGroup(Modifiergroup modifierGroup);
     Task<bool> AddItemModifierGroupMappings(Itemmodifiergroupmapping modifierMapping);
     Task<bool> DeleteItemModifierGroupMappings(Itemmodifiergroupmapping model);

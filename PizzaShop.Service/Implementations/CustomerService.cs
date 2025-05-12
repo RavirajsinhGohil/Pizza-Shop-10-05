@@ -36,9 +36,9 @@ public class CustomerService : ICustomerService
         CustomersListViewModel model = await _customerRepository.GetCustomersForExport(viewModel);
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-        using (ExcelPackage package = new ExcelPackage())
+        using (ExcelPackage package = new())
         {
-            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("model");
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Customers");
 
             Color headerColor = ColorTranslator.FromHtml("#0568A8");
             Color borderColor = Color.Black; // Black border

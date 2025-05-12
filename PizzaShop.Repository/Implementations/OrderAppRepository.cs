@@ -348,6 +348,14 @@ public class OrderAppRepository : IOrderAppRepository
         return itemsQuery.ToList();
     }
 
+    public string GetModifierNameById(int? modifierId)
+    {
+        return _dbo.Items
+            .Where(i => i.Itemid == modifierId)
+            .Select(i => i.Itemname)
+            .FirstOrDefault();
+    }
+
     public List<Menucategory> GetAllCategories()
     {
         return _dbo.Menucategories.Where(c => !c.Isdeleted).OrderBy(c => c.Menucategoryid).ToList();
@@ -650,10 +658,10 @@ public class OrderAppRepository : IOrderAppRepository
                 else
                 {
                     // Update existing item
-                    if (existingItem.Availablequantity > item.Quantity)
-                    {
-                        throw new InvalidOperationException($"Cannot reduce quantity below already prepared quantity ({existingItem.Availablequantity}).");
-                    }
+                    // if (existingItem.Availablequantity > item.Quantity)
+                    // {
+                    //     throw new InvalidOperationException($"Cannot reduce quantity below already prepared quantity ({existingItem.Availablequantity}).");
+                    // }
 
                     existingItem.Quantity = item.Quantity;
                     // existingItem.Inprogressquantity = item.Quantity - existingItem.Availablequantity;
@@ -663,19 +671,24 @@ public class OrderAppRepository : IOrderAppRepository
                     // existingItem.Instructions = item.Instruction;
 
                     // Update modifiers: remove old, add new
-                    _dbo.Ordermodifierdetails.RemoveRange(existingItem.Ordermodifierdetails);
-
-                    foreach (ModifierForMenuOrderViewModel? modifier in item.SelectedModifiers)
+                    if (existingItem.Ordermodifierdetails.Count > 0)
                     {
-                        Ordermodifierdetail? newModifier = new()
+                        // Remove old modifiers    
+                        _dbo.Ordermodifierdetails.RemoveRange(existingItem.Ordermodifierdetails);
+                        _dbo.SaveChanges();
+
+                        foreach (ModifierForMenuOrderViewModel? modifier in item.SelectedModifiers)
                         {
-                            Orderdetailid = existingItem.Itemid,
-                            Itemid = modifier.ModifierId,
-                            // Modifieritemname = modifier.ModifierName,
-                            Price = modifier.Rate,
-                            Quantity = 1
-                        };
-                        _dbo.Ordermodifierdetails.Add(newModifier);
+                            Ordermodifierdetail? newModifier = new()
+                            {
+                                Orderdetailid = existingItem.Orderdetailid,
+                                Itemid = modifier.ModifierId,
+                                // Modifieritemname = modifier.ModifierName,
+                                Price = modifier.Rate,
+                                Quantity = 1
+                            };
+                            _dbo.Ordermodifierdetails.Add(newModifier);
+                        }
                     }
                 }
             }
@@ -703,14 +716,14 @@ public class OrderAppRepository : IOrderAppRepository
                 Taxesandfee? tax = await _dbo.Taxesandfees.FindAsync(taxId);
                 if (tax != null)
                 {
-                    // _dbo.Invoicetaxes.Add(new Invoicetax
-                    // {
-                    //     Invoiceid = model.OrderId,
-                    //     Taxid = tax.TaxId,
-                    //     Taxname = tax.TaxName,
-                    //     Taxtype = tax.Type,
-                    //     Taxamount = tax.TaxAmount
-                    // });
+                    _dbo.Ordertaxmappings.Add(new Ordertaxmapping
+                    {
+                        Orderid = model.OrderId,
+                        Taxid = tax.Taxid,
+                        Taxname = tax.Taxname,
+                        Taxtype = tax.Taxtype,
+                        Taxamount = tax.Taxvalue //Need to be add SubTotal
+                    });
                 }
             }
 
@@ -731,7 +744,7 @@ public class OrderAppRepository : IOrderAppRepository
         {
             Console.WriteLine($"Error in SaveOrderItemsAsync: {ex.Message}");
             await transaction.RollbackAsync();
-            throw;
+            throw new Exception("Error saving order items", ex);
         }
     }
 

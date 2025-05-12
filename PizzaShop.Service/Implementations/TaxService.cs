@@ -30,7 +30,7 @@ public class TaxService : ITaxService
         var query = from i in _dbo.Taxesandfees
                     where i.Isdeleted != true
                     select new TaxViewModel
-                    {   
+                    {
                         TaxId = i.Taxid,
                         TaxName = i.Taxname,
                         Type = i.Taxtype,
@@ -59,31 +59,32 @@ public class TaxService : ITaxService
 
     // Add Tax
     public async Task<AuthResponse> AddTax(AddTaxViewModel model)
-    {   
-        try{
-        var token = _httpContext.HttpContext.Request.Cookies["Token"];
-        var userid = _userservices.GetEmailFromToken(token);
-
-        var tax = new Taxesandfee
+    {
+        try
         {
-            Taxname = model.TaxName,
-            Taxtype = model.Type,
-            Isenabled = model.Isenable,
-            Isdefault = model.Isdefault,
-            Taxvalue = model.TaxAmount,
-            // Createdby = userid
-        };
+            var token = _httpContext.HttpContext.Request.Cookies["Token"];
+            var userid = _userservices.GetEmailFromToken(token);
 
-        _dbo.Taxesandfees.Add(tax);
-        await _dbo.SaveChangesAsync();
+            var tax = new Taxesandfee
+            {
+                Taxname = model.TaxName,
+                Taxtype = model.Type,
+                Isenabled = model.Isenable,
+                Isdefault = model.Isdefault,
+                Taxvalue = model.TaxAmount,
+                // Createdby = userid
+            };
 
-        return new AuthResponse
+            _dbo.Taxesandfees.Add(tax);
+            await _dbo.SaveChangesAsync();
+
+            return new AuthResponse
             {
                 Success = true,
                 Message = "Tax Added Succesfully!"
             };
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Console.WriteLine($"Error in Add Tax: {e.Message}");
 
@@ -98,32 +99,33 @@ public class TaxService : ITaxService
 
     // Edit Tax
     public async Task<AuthResponse> EditTax(AddTaxViewModel model)
-    {   
-        try{
-        var token = _httpContext.HttpContext.Request.Cookies["Token"];
-        // var userid = _userservices.GetUserIdfromToken(token);
+    {
+        try
+        {
+            var token = _httpContext.HttpContext.Request.Cookies["Token"];
+            // var userid = _userservices.GetUserIdfromToken(token);
 
-        var existingtax = _dbo.Taxesandfees.FirstOrDefault(i=> i.Taxid==model.TaxId);
+            var existingtax = _dbo.Taxesandfees.FirstOrDefault(i => i.Taxid == model.TaxId);
 
-        
+
             existingtax.Taxname = model.TaxName;
             existingtax.Taxtype = model.Type;
             existingtax.Isenabled = model.Isenable;
             existingtax.Isdefault = model.Isdefault;
             existingtax.Taxvalue = model.TaxAmount;
             // existingtax.Updatedby = userid;
-        
 
-        _dbo.Taxesandfees.Update(existingtax);
-        await _dbo.SaveChangesAsync();
 
-        return new AuthResponse
+            _dbo.Taxesandfees.Update(existingtax);
+            await _dbo.SaveChangesAsync();
+
+            return new AuthResponse
             {
                 Success = true,
                 Message = "Tax Edited Succesfully!"
             };
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Console.WriteLine($"Error in Edit Tax: {e.Message}");
 
@@ -163,10 +165,11 @@ public class TaxService : ITaxService
         }
     }
 
-    public async Task<List<TaxViewModel>> GetTaxes ()
+    public async Task<List<TaxViewModel>> GetTaxesByOrderId(int orderId)
     {
         return await _dbo.Ordertaxmappings
-                        .Select (tax => new TaxViewModel
+                        .Where(tax => tax.Orderid == orderId)
+                        .Select(tax => new TaxViewModel
                         {
                             TaxId = tax.Taxid,
                             TaxName = tax.Taxname,
